@@ -1,0 +1,62 @@
+.App {
+  /* text-align: center; */
+  background-color: #f1f4f9;
+  font-size: 0.7rem ;
+  box-sizing: border-box;
+}
+
+/* navigation bar styles */
+.appName {
+  padding-left: 20px;
+}
+.navWrapper {
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.step{
+  background-color: #2b61f4;
+  color: white;
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  line-height: 0.8px;
+  padding: 9px;
+  font-weight: 600;
+  font-size: smaller;
+}
+.active{
+  background-color: #defbe8;
+  color: green;
+}
+
+/* upload page */
+.uploader{
+  margin: 0 auto;
+  padding: 15px;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  height:85vh;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  background-color: white;
+}
+.dragDropUploader{
+  background-color: gray;
+  font-size: 15px;
+  text-align: center;
+  border: 1px dashed black;
+  padding: 20px;
+}
+.browseLink {
+  color: blue;
+  display: block;
+  font-size: 10px;
+}
+
+
+
+
+
+
