@@ -8,6 +8,7 @@ export default function UploadStep() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
+  const [valid, setValid] = useState(false);
   // drag and drop
   const[isDragging, setIsDragging] = useState(false)
   
@@ -41,6 +42,7 @@ export default function UploadStep() {
       setLoading(true);
       const response = await axios.post("http://127.0.0.1:8000/upload", formData);
       setStats(response.data);
+      setValid(true);
     } catch (error) {
       console.error(error);
       alert("Error uploading file");
@@ -48,11 +50,15 @@ export default function UploadStep() {
       setLoading(false);
     }
   };
+
+  // navigating to inspect page
+ 
   return (
-    <>
-      <div className="uploader">
+    <div className="screens">
+      <div className="uploader ">
         <h4>Upload Your Data</h4>
-        upload a CSV file to create a new Analysis job
+        <p>upload a CSV file to create a new Analysis job</p>
+
         {/* drag  and drop*/}
         <div className="dragDropUploader"
         onDragOver={(e)=> {
@@ -73,17 +79,21 @@ export default function UploadStep() {
           onChange={(e) => setFile(e.target.files[0])}
         />
         </div>
-        <button onClick={handleUpload} disabled={loading}>
+
+        {/* button */}
+
+        <button onClick={handleUpload} disabled={loading} className="btn btn-primary">
           Upload
         </button>
-        {/* {loading ? "uploading..." : "upload"} */}
-      </div>
+        supported files: only CSV files
 
-      {stats && (
-        <div className="result">
-          <pre>{JSON.stringify(stats, null, 2)}</pre>
-        </div>
-      )}
-    </>
+      </div>
+    </div>
+
+      // {stats && (
+      //   <div className="result">
+      //     <pre>{JSON.stringify(stats, null, 2)}</pre>
+      //   </div>
+      // )}
   );
 }
