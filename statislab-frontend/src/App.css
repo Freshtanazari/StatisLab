@@ -149,6 +149,34 @@ Table{
   text-transform: capitalize;
 }
 
+/* analysis screen */
+label {
+display: block;
+}
+.analysisScreen{
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;;
+  padding: 20px, 50px;
+}
+.analysisControl{
+  width: 25%;
+  background-color: white;
+  padding: 20px 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) ;
+}
+.analysisLab{
+  width: 75%;
+}
+fieldset {
+  margin: 20px 0 !important;       /* spacing between fieldsets */
+  padding: 20px;         /* inner spacing */
+  border-radius: 10px;   /* rounded corners */
+  border: 1px solid #ccc; /* make the border visible */
+  background-color: #f1f4f9;
+}
+
+
 
 
 
