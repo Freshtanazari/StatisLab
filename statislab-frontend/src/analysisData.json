@@ -1,0 +1,173 @@
+[
+  {
+    "section": "Descriptive Analysis",
+    "step": "Inspect dataset structure (rows, columns, types)",
+    "minColumns": 0,
+    "maxColumns": 0,
+    "columnTypes": "any",
+    "requirements": [],
+    "displayOptions": []
+  },
+  {
+    "section": "Descriptive Analysis",
+    "step": "Summary statistics (mean, median, mode, std, min, max)",
+    "minColumns": 1,
+    "maxColumns": 10,
+    "columnTypes": "numeric (mode can also use categorical)",
+    "requirements": ["columns", "aggregate_method: mean/median/mode/std/min/max"],
+    "displayOptions": []
+  },
+  {
+    "section": "Descriptive Analysis",
+    "step": "Check missing values",
+    "minColumns": 0,
+    "maxColumns": 0,
+    "columnTypes": "any",
+    "requirements": ["columns optional"],
+    "displayOptions": []
+  },
+  {
+    "section": "Descriptive Analysis",
+    "step": "Identify outliers",
+    "minColumns": 1,
+    "maxColumns": 5,
+    "columnTypes": "numeric",
+    "requirements": ["columns", "method: IQR/Z-score", "optional hue/grouping"],
+    "displayOptions": ["color", "marker"]
+  },
+  {
+    "section": "Descriptive Analysis",
+    "step": "Explore categorical distributions (counts, frequency)",
+    "minColumns": 1,
+    "maxColumns": 1,
+    "columnTypes": "categorical",
+    "requirements": ["column", "optional hue/grouping"],
+    "displayOptions": ["color", "bar_style"]
+  },
+  {
+    "section": "Descriptive Analysis",
+    "step": "Explore numerical distributions (histogram, skewness, kurtosis)",
+    "minColumns": 1,
+    "maxColumns": 5,
+    "columnTypes": "numeric",
+    "requirements": ["columns", "bins", "optional hue/grouping"],
+    "displayOptions": ["color_palette", "edgecolor", "hist_type", "alpha"]
+  },
+  {
+    "section": "Statistical Tests",
+    "step": "Check assumptions for tests (normality, variance)",
+    "minColumns": 1,
+    "maxColumns": 5,
+    "columnTypes": "numeric",
+    "requirements": ["columns", "normality test (Shapiro-Wilk)", "variance test (Levene)"],
+    "displayOptions": ["color"]
+  },
+  {
+    "section": "Statistical Tests",
+    "step": "t-test (one-sample, two-sample, paired)",
+    "minColumns": 1,
+    "maxColumns": 2,
+    "columnTypes": "numeric (2 if using two-sample with grouping)",
+    "requirements": ["columns", "group column if two-sample", "test_type: one-sample/two-sample/paired"],
+    "displayOptions": ["color", "marker"]
+  },
+  {
+    "section": "Statistical Tests",
+    "step": "ANOVA (one-way, two-way)",
+    "minColumns": 2,
+    "maxColumns": 5,
+    "columnTypes": "numeric dependent + categorical independent(s)",
+    "requirements": ["dependent column", "categorical independent(s)", "anova_type: one-way/two-way"],
+    "displayOptions": ["color", "marker"]
+  },
+  {
+    "section": "Statistical Tests",
+    "step": "Chi-square test for categorical data",
+    "minColumns": 2,
+    "maxColumns": 2,
+    "columnTypes": "categorical",
+    "requirements": ["two categorical columns"],
+    "displayOptions": ["color"]
+  },
+  {
+    "section": "Statistical Tests",
+    "step": "Correlation tests (Pearson, Spearman)",
+    "minColumns": 2,
+    "maxColumns": 2,
+    "columnTypes": "numeric",
+    "requirements": ["two numeric columns", "method: Pearson/Spearman"],
+    "displayOptions": ["color"]
+  },
+  {
+    "section": "Statistical Tests",
+    "step": "Regression analysis if applicable",
+    "minColumns": 2,
+    "maxColumns": 10,
+    "columnTypes": "numeric dependent + numeric or categorical independent(s)",
+    "requirements": ["dependent column", "independent columns", "optional categorical as dummy", "regression type: linear/multiple"],
+    "displayOptions": ["color", "marker", "line_style"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Histograms for numerical data",
+    "minColumns": 1,
+    "maxColumns": 5,
+    "columnTypes": "numeric",
+    "requirements": ["columns", "bins", "optional hue/grouping"],
+    "displayOptions": ["color_palette", "edgecolor", "hist_type", "alpha"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Boxplots to identify outliers",
+    "minColumns": 1,
+    "maxColumns": 2,
+    "columnTypes": "numeric (optional categorical for grouping)",
+    "requirements": ["numeric column", "optional categorical column for hue/grouping"],
+    "displayOptions": ["color_palette", "marker", "line_style"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Bar charts for categorical data",
+    "minColumns": 1,
+    "maxColumns": 1,
+    "columnTypes": "categorical",
+    "requirements": ["column", "optional hue/grouping"],
+    "displayOptions": ["color_palette", "bar_style", "alpha"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Scatter plots for relationships",
+    "minColumns": 2,
+    "maxColumns": 2,
+    "columnTypes": "numeric (optional categorical for color/grouping)",
+    "requirements": ["x column", "y column", "optional hue/grouping"],
+    "displayOptions": ["color_palette", "marker", "size", "alpha"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Heatmaps for correlations",
+    "minColumns": 2,
+    "maxColumns": 20,
+    "columnTypes": "numeric",
+    "requirements": ["numeric columns", "correlation method: Pearson/Spearman"],
+    "displayOptions": ["color_palette", "annot", "linewidths", "linecolor"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Line plots for trends over time",
+    "minColumns": 2,
+    "maxColumns": 2,
+    "columnTypes": "numeric vs datetime",
+    "requirements": ["x datetime column", "y numeric column(s)", "optional hue/grouping"],
+    "displayOptions": ["color_palette", "marker", "line_style", "alpha"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Pair plots for multivariate exploration",
+    "minColumns": 2,
+    "maxColumns": 20,
+    "columnTypes": "numeric (optional categorical for hue/grouping)",
+    "requirements": ["numeric columns", "optional categorical for hue/grouping"],
+    "displayOptions": ["color_palette", "marker", "line_style", "alpha"]
+  }
+]
