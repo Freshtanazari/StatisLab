@@ -1,18 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 import Table from 'react-bootstrap/Table';
 
-const Preview = ()=>{
-    const csvColumns = ["ID", "Age", "Gender", "Income", "Education", "Country", "Score", "Enrolled"]
-    const CsvRows = [
-  [1, 23, "Male", 42000, "Bachelor", "Pakistan", 78, true],
-  [2, 29, "Female", 61000, "Master", "Pakistan", 85, true],
-  [3, null, "Male", 50000, "Bachelor", "India", 72, false],
-  [4, 35, "Female", "unknown", "PhD", "UK", 91, true],
-  [5, 35, "Female", 72000, "PhD", "UK", 91, true],
-  [6, 18, "Male", 15000, "High School", "Pakistan", 40, false],
-  [6, 18, "Male", 15000, "High School", "Pakistan", 40, false] // duplicate row
-];
-
+const Preview = ({data})=>{
+    let [dataReady, setDataReady] = useState(false);
+     if (!data || data.length === 0) {
+    return <p>No data to preview</p>; // safe fallback
+  }
+const {dataset, totalCols, totalRows} = data;
+  // getting the columns
+let columns = Object.keys(dataset[0])
 
     return(
         <div >
@@ -21,11 +17,11 @@ const Preview = ()=>{
                 <div className="summaryCards">
                     <div className="card">
                         Total rows
-                        <span className="numbers">1000</span>
+                        <span className="numbers">{totalRows}</span>
                     </div>
                     <div className="card">
                         Total columns
-                        <span className="numbers">10</span>
+                        <span className="numbers">{totalCols}</span>
                     </div>
                     <div className="card">
                         Missing Cells
@@ -44,18 +40,18 @@ const Preview = ()=>{
                         {/* adding the columns */}
                         <thead>
                         <tr>
-                            {csvColumns.map((data, index)=>(
-                                <th key={index}>{data}</th>
+                            {columns.map((data, dataindex)=>(
+                                <th key={dataindex}>{data}</th>
                             ))
                             }
                         </tr>
                         </thead>
                         {/* adding the rows */}
                         <tbody>
-                        {CsvRows.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                                {row.map((cell, cellIndex)=> (
-                                    <td key="cellIndex">{String(cell)}</td>
+                        {dataset.map((obj, objIndex) => (
+                            <tr key={objIndex}>
+                                {Object.values(obj).map((cell, cellIndex)=> (
+                                    <td key={cellIndex}>{String(cell)}</td>
                                 ))}
                             </tr>
                         ))}

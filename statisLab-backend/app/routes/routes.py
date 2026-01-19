@@ -1,20 +1,34 @@
 from fastapi import APIRouter, UploadFile, File
 import pandas as pd
+from ..core.preview import previewFile as preview
+from ..core.preview import getTotalColumnsAndRows
 
 router = APIRouter()
 
 @router.post("/upload")
 
+@router.post("/upload")
 async def upload_csv(file: UploadFile = File(...)):
-    #read the CSV into a pandas DataFrame
-    df = pd.read_csv(file.file)
-    #return column names and types
-    return{
-        "columns" : df.columns.tolist(),
-        "dtypes" : df.dtypes.astype(str).to_dict(), 
-        "preview": df.head(5).to_dict(orient = "records")
-    }
+    """
+    Endpoint to upload a CSV file.
+    Uses preview() to generate a preview of the file.
+    """
+    print("this is run")
+    # Use your helper function instead of writing pandas code here
+    file.file.seek(0)  # reset pointer to start
 
+    if file.content_type not in ["text/csv", "application/vnd.ms-excel"]:
+        return {"error": "Invalid file type"}
+    
+
+    df = pd.read_csv(file.file)
+    dataset = preview(df, n= 10)
+    totals = getTotalColumnsAndRows(df)
+    return {
+        "dataset": dataset, 
+        "totalCols": totals[0], 
+        "totalRows": totals[1]
+    }
 
 @router.get("/status")
 
