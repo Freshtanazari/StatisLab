@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
-
 import axios from "axios";
 
-export default function UploadStep() {
+
+
+export default function UploadStep({setData}) {
   // choosing file
   const [file, setFile] = useState(null);
-  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const [valid, setValid] = useState(false);
@@ -41,11 +41,25 @@ export default function UploadStep() {
     try {
       setLoading(true);
       const response = await axios.post("http://127.0.0.1:8000/upload", formData);
-      setStats(response.data);
+      setData(response.data);
       setValid(true);
     } catch (error) {
+      let message = "Error uploading file";
+      if(error.response){
+            // Server responded with a status code outside 2xx
+    message = `Server Error: ${error.response.status} - ${error.response.data?.detail || error.response.data || error.message}`;
+      }
+      if(error.request){
+        // request was made but no reponse recieved
+        message = "no response from server. please check you connection";
+      }else{
+         // Something else went wrong in setting up the request
+      message = `Request Error: ${error.message}`;
+      }
+
       console.error(error);
-      alert("Error uploading file");
+      alert(message);
+
     } finally {
       setLoading(false);
     }
