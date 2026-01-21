@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 import pandas as pd
-from ..core.preview import previewFile as preview
-from ..core.preview import getTotalColumnsAndRows
+from ..services.preview import previewFile as preview
+from ..services.preview import getTotalColumnsAndRows
 
 router = APIRouter()
 
