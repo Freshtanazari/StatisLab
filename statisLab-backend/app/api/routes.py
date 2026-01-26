@@ -2,10 +2,10 @@ from fastapi import APIRouter, UploadFile, File
 import pandas as pd
 from ..services.preview import previewFile as preview
 from ..services.preview import getTotalColumnsAndRows
+from ..validators.fileValidation import validateCsvFile
+
 
 router = APIRouter()
-
-@router.post("/upload")
 
 @router.post("/upload")
 async def upload_csv(file: UploadFile = File(...)):
@@ -16,9 +16,14 @@ async def upload_csv(file: UploadFile = File(...)):
     print("this is run")
     # Use your helper function instead of writing pandas code here
     file.file.seek(0)  # reset pointer to start
+    isValid, valueReturned = validateCsvFile(file);
 
-    if file.content_type not in ["text/csv", "application/vnd.ms-excel"]:
-        return {"error": "Invalid file type"}
+    if isValid:
+        df = valueReturned;
+    else:
+        errorMessage = valueReturned;
+    
+   
     
 
     df = pd.read_csv(file.file)
