@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from app.routes.routes import router
+from starlette.middleware.sessions import SessionMiddleware
+from app.routes.session import sessionRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="StatisLab")
 
-from fastapi.middleware.cors import CORSMiddleware
 
 origins = ["http://localhost:3000"]
 
@@ -14,9 +16,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# to include the secret key
+app.add_middleware(
+    SessionMiddleware, 
+    secret_key="dev-secret-key", # add it as anv var later
+    max_age=60 * 60 * 5 # give each visitors 5 hours max
+)
 
 #include routes from routes.py
 app.include_router(router)
+app.include_router(sessionRouter)
 
 
 @app.get("/")
