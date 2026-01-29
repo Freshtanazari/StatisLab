@@ -26,7 +26,6 @@ async def upload_csv(file: UploadFile = File(...)):
    
     
 
-    df = pd.read_csv(file.file)
     dataset = preview(df, n= 10)
     totals = getTotalColumnsAndRows(df)
     return {
@@ -34,6 +33,7 @@ async def upload_csv(file: UploadFile = File(...)):
         "totalCols": totals[0], 
         "totalRows": totals[1]
     }
+
 
 @router.get("/status")
 
