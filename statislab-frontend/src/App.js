@@ -19,9 +19,9 @@ function App() {
       <main>
         <UploadStep setData={setData}/>
         {data && <Preview data={data}/>}
-        {/* <Processing/> */}
-        {/* <Analysis/> */}
-        {/* <Report/> */}
+        <Processing/>
+        <Analysis/>
+        <Report/>
 
       </main>
     </div>

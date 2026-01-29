@@ -18,33 +18,6 @@ def getTotalColumnsAndRows(dataset: pd.DataFrame):
     shape = dataset.shape
     return (shape[1], shape[0])
 
-
-# to be removed:
-import pandas as pd
-import numpy as np
-
-data = {
-    "id": [1, 2, 3, 4, 5, 6, 7, 8],
-    "name": ["Alice", "Bob", "Charlie", "Diana", None, "Frank", "Grace", "Henry"],
-    "age": [23, 27, None, 31, 29, None, 24, 40],
-    "email": [
-        "alice@example.com",
-        "bob@example.com",
-        None,
-        "diana@example.com",
-        "eve@example.com",
-        None,
-        "grace@example.com",
-        "henry@example.com"
-    ],
-    "score": [88, 92, 79, None, 85, 90, None, 76],
-    "city": ["NY", "LA", "NY", "SF", "LA", None, "NY", "SF"]
-}
-
-df = pd.DataFrame(data)
-
-
-
 # get the missing values percentage for the dataframe
 def getPercentageMissing(df):
     """
@@ -74,13 +47,8 @@ def getColsTypes(df):
             types[str(df[col].dtype)] += 1 
         else:
             types[str(df[col].dtype)] = 1
-    
     return types
 
-print(getColsTypes(df))
-
-        
-        
 
 
     
