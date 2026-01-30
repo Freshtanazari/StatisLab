@@ -8,7 +8,11 @@ class Analysis:
 
     def __init__(self, sessionID: str, store: DatasetStore):
         self.dataset = store.getDataset(sessionID)
+        self.df = self.dataset.df_current
+ 
 
-        
+    
+
+
         
         

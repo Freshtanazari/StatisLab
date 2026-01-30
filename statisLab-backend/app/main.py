@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.routes.routes import router
+from app.api.routes import router
 from starlette.middleware.sessions import SessionMiddleware
-from app.routes.session import sessionRouter
+from app.api.session import sessionRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="StatisLab")
