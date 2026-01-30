@@ -2,9 +2,9 @@ from fastapi import APIRouter, Request
 import uuid
 
 # create the router 
-router = APIRouter(prefix="./session", tags=["session"])
+sessionRouter = APIRouter(prefix="/session", tags=["session"])
 
-@router.get("/")
+@sessionRouter.get("/")
 def createSession(request: Request):
     """
     creates a session for any unique  vistor
