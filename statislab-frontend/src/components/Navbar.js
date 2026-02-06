@@ -1,36 +1,53 @@
 import React from "react";
 
-const Navbar = () => {
-    return(
-        <div className="navWrapper row py-3">
-            <div className="appName col-7 fs-5 px-4"> StatisLab</div>
-            <div className="col-5 d-flex flex-row justify-content-between">
-                <div>
-                    <span className="step mx-1 text-center rounded-circle">1</span>
-                    Upload
-                </div>
-                <div>
-                    <span className="step mx-1 text-center rounded-circle active">✓</span>
-                    Inspect
-                </div>
-                
-                <div>
-                    <span className="step mx-1 text-center rounded-circle">3</span>
-                    process
-                </div>
-                
-                <div>
-                    <span className="step mx-1 text-center rounded-circle">4</span>
-                    visualize
-                </div>
-              
-                <div >
-                    <span className="step mx-1 text-center rounded-circle">5</span>
-                    Report
-                </div>
-            </div>
-        </div>
-    )
-}
+// Step component
+const Step = ({ number, label, active }) => {
+  return (
+    <div className="flex flex-col items-center text-xs">
+      <div
+        className={`w-6 h-6 rounded-full flex items-center justify-center font-semibold text-white transition-colors duration-300
+          ${active ? "bg-green-500" : "bg-blue-500"}`}
+      >
+        {number}
+      </div>
+      <span className="mt-1 capitalize">{label}</span>
+    </div>
+  );
+};
 
-export default Navbar;
+// Navbar with steps
+const Navbar = ({ steps, currentStep }) => {
+  return (
+    <div className="bg-white shadow-md py-2 px-4 flex items-center justify-between">
+      {/* App name */}
+      <div className="text-lg font-semibold">StatisLab</div>
+
+      {/* Step progress */}
+      <div className="flex space-x-4 items-center">
+        {steps.map((step, index) => (
+          <Step
+            key={index}
+            number={step.number}
+            label={step.label}
+            active={currentStep >= step.number}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Example usage
+export default function App() {
+  const steps = [
+    { number: 1, label: "Upload" },
+    { number: 2, label: "Inspect" },
+    { number: 3, label: "Process" },
+    { number: 4, label: "Visualize" },
+    { number: 5, label: "Report" },
+  ];
+
+  const currentStep = 2; // dynamically set based on user progress
+
+  return <Navbar steps={steps} currentStep={currentStep} />;
+}

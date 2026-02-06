@@ -16,7 +16,7 @@ class IndependentTtest(StatisticalTest):
         self.alpha = alpha 
         self.welch = welch
 
-        self.groups = df[groupCol].unique()
+        self.groups = self.df[groupCol].unique()
         if len(self.groups) != 2 :
             raise ValueError("IndependentTTest requires exactly 2 groups")
         self.group1 = df[df[groupCol] == self.groups[0]][valueCol]
