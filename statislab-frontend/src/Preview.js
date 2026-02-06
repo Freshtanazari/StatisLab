@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Table from 'react-bootstrap/Table';
+
 
 const Preview = ({data})=>{
     let [dataReady, setDataReady] = useState(false);
@@ -36,12 +36,12 @@ let columns = Object.keys(dataset[0])
 
                 <div className="dataFramePreview">
                     <span className="dataframeHeader" >Raw Data Preview <span style={{"opacity" : 0.7}}>(First 10 rows)</span></span>
-                    <Table striped bordered hover>
+                    <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
                         {/* adding the columns */}
-                        <thead>
+                        <thead className="bg-gray-800 text-white">
                         <tr>
                             {columns.map((data, dataindex)=>(
-                                <th key={dataindex}>{data}</th>
+                                <th key={dataindex} className="px-4 py-2 text-left border-b border-gray-300">{data}</th>
                             ))
                             }
                         </tr>
@@ -51,12 +51,12 @@ let columns = Object.keys(dataset[0])
                         {dataset.map((obj, objIndex) => (
                             <tr key={objIndex}>
                                 {Object.values(obj).map((cell, cellIndex)=> (
-                                    <td key={cellIndex}>{String(cell)}</td>
+                                    <td key={cellIndex} className="px-4 py-2 border-b border-gray-200">{String(cell)}</td>
                                 ))}
                             </tr>
                         ))}
                         </tbody>
-                    </Table>
+                    </table>
                     <span className="wideView">View all 1000 rows</span>
                 </div>
 

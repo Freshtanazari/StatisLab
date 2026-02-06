@@ -1,5 +1,5 @@
 import React from "react";
-import Table from "react-bootstrap/Table";
+
 
 const Processing = () => {
   const logReports = [
@@ -78,30 +78,33 @@ const Processing = () => {
         <div className="inspection">
           <h4>Column Inspection</h4>
           Review and fix data quality issues
-          <Table  striped bordered hover>
+          <table  striped bordered hover>
             <thead>
               <tr>
-                <td>Names & Type</td>
-                <td>Heath Status</td>
-                <td>Quick Actions</td>
+                <th  className="px-4 py-2 text-left border-b border-gray-300"
+        >Names & Type</th>
+                <th className="px-4 py-2 text-left border-b border-gray-300"
+        >Heath Status</th>
+                <th  className="px-4 py-2 text-left border-b border-gray-300"
+        >Quick Actions</th>
               </tr>
             </thead>
             <tbody>
               {columnReports.map((col, index) => (
                 <tr key={index}>
-                  <td>
+                  <td className="px-4 py-2 border-b border-gray-200">
                     <strong>{col.name}</strong>
                     <div style={{ opacity: 0.7 }}>{col.type}</div>
                   </td>
 
-                  <td>
+                  <td className="px-4 py-2 border-b border-gray-200">
                     {col.health.status}
                     <div style={{ fontSize: "0.75rem" }}>
                       {col.health.message}
                     </div>
                   </td>
 
-                  <td>
+                  <td className="px-4 py-2 border-b border-gray-200">
                     <div>Unique: {col.actions.uniqueValues}</div>
                     <div>Mean: {col.actions.mean}</div>
                     <div>Std: {col.actions.std}</div>
@@ -109,7 +112,7 @@ const Processing = () => {
                 </tr>
               ))}
             </tbody>
-          </Table>
+          </table>
         </div>
         <div className="loggings">
           <h6>Proccessing logs:</h6>

@@ -11,42 +11,62 @@ class OneWayANOVA(StatisticalTest):
         self.alpha = alpha 
         self.valueCol = valueCol # should be numeric
         self.groupCol = groupCol
-        self.groups = self.groupCol.unique()
-        if len(self.groups):
-            raise KeyError("one way anova must at least have 3 columns")
+
+        self.groups = self.df[self.groupCol].unique()
+
+        if len(self.groups) < 3:
+            raise ValueError("one way anova must at least have 3 columns")
         
-def checkAssumptions(self) -> dict:
+    def checkAssumptions(self) -> dict:
         assumptions ={}
 
         #1. normality - shapiro-wilk
         for group in self.groups:
-             assumptions["normality_"+ group] = shapiro(self.group).pvalue > self.alpha
+             data = self.df[self.df[self.groupCol] == group ][self.valueCol]
+             assumptions[f"normality_{group}"] = shapiro(data).pvalue > self.alpha
 
         #2. Equal Variance- levene
-        for group in self.groups:
-             assumptions["equal_variance"+ group] = levene(self.group).pvalue > self.alpha
+        grouped_result = [
+            self.df[self.df[self.groupCol]== group][self.valueCol]
+            for group in self.groups
+        ]
+        assumptions["equal_variance"] = levene(*grouped_result).pvalue > self.alpha
 
         #3. Independence 
-        assumptions["independence"] = True # since the user has chose the independence t test
+        assumptions["independence"] = True # assumed by study design
 
         return assumptions
 
     def run(self) -> dict:
-        tStat, pValue = f_oneway(...self.groups)
+
+        grouped_result = [
+            self.df[self.df[self.groupCol] == group][self.valueCol]
+            for group in self.groups
+        ]
+
+        fStat, pValue = f_oneway(*grouped_result)
+
         return {
-             "test": "one-way-ANOVA test"
-             "t_statistic":
-             "p_value": 
-             "reject_null"
+             "test": "one-way-ANOVA test",
+             "f_statistic":fStat,
+             "p_value": pValue,
+             "reject_null": pValue < self.alpha
         }
 
 
-    def effectSize(Self):
-     pass
+    def effectSize(self, fStat: float) -> dict:
+        k = len(self.groups)
+        N = len(self.df)
+
+        eta_squared = (fStat * (k - 1)) / (fStat * (k - 1) + (N - k))
+
+        return {
+            "effect_size": "eta_squared",
+            "value": eta_squared
+        }
 
     def nullHypothesis(self):
-        return f"The mean of group {self.groups[0]} is equal to the mean of group {self.groups[1]} (no difference)."
+        return "All group means are equal."
 
     def alternativeHypothesis(self):
-        return f"The mean of group {self.groups[0]} is not equal to the mean of group {self.groups[1]}."
-        
+        return "At least one group mean is different."
