@@ -2,15 +2,26 @@ class Report:
   
     def __init__(self, sessionID):
         self.sessionID = sessionID
-        analyses = [];
-        # the first element will be the session id
-        analyses.append(["sessionID", sessionID])
-    
-    def addAnalysis(self, analysisResult):
-        self.anallyses.append(analysisResult)
+        self.analyses = list()
 
-    def getReport(self):
-        return {
-            "session_id": self.sessionId, 
-            "analyses": self.analyses
-        }
+    def addAnalysis(self, analysisResult):
+        self.analyses.append(analysisResult)
+
+    def removeAnalysis(self,index):
+        if not (0 <= index < len(self.analyses)):
+            raise IndexError("The index doesnt exist")
+        self.analyses.pop(index)
+
+    def returnAnalysis(self, index):
+        if not (0 <= index < len(self.analyses)):
+            raise IndexError("The index doesnt exist")
+        return self.analyses[index]
+    
+    def returnAllAnalysis(self):
+        return self.analyses
+    
+    def insertAnalysis(self, index, analysisResult):
+        if not (0 <= index <= len(self.analyses)):
+            raise IndexError("The index doesnt exist")
+        self.analyses.insert(index, analysisResult)
+    
