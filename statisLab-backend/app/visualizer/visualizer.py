@@ -8,12 +8,25 @@ class Visualizer:
     def __init__(self, df, save_dir = "plots", palette="husl", theme="whitegrid"):
         self.df = df
         self.save_dir = save_dir
-        os.makedirs(self.save_dir, exist_ok=True)
         self.palette = palette
         self.theme = theme
+        os.makedirs(self.save_dir, exist_ok=True)
         sns.set_theme(style=self.theme, palette=self.palette)
-        plt.style.use("classic")  # applies to all plots
-
+        # plt.style.use("classic")  # applies to all plots
+    # helper function for saving the plots:
+    def save_plots(self, fig, plot_name, columns, file_suffix = None):
+        if file_suffix is None:
+            file_suffix = "_".join(columns)
+        
+        file_name = f"{plot_name}_{file_suffix}.png"
+        save_path = os.path.join(self.save_dir, file_name)
+        fig.savefig(save_path, bbox_inches="tight")
+        plt.close(fig)
+        return {
+            "plot_name" : plot_name, 
+            "plot_columns" : columns, 
+            "saved_path" : save_path
+        }
 
 # univariate plots:(single variable)
     def boxplot(self, col):
@@ -254,8 +267,9 @@ class Visualizer:
 
 def main():
     df = pd.read_csv("sample_data/vizsampledata.csv")
-    viz = Visualizer(df)
-
+    # viz = Visualizer(df)
+    # theme, and palette
+    viz = Visualizer(df, palette="coolwarm", theme="darkgrid")
 
     result_box = viz.boxplot("salary")
     result_hist = viz.histogram("age")
