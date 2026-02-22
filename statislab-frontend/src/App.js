@@ -1,28 +1,57 @@
 import './App.css';
-import React, {useState} from "react";
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
 import Navbar from "./components/Navbar.js";
 import UploadStep from "./UploadStep.js";
 import Preview from "./Preview.js";
-import Processing from "./Processing.js"
+import Processing from "./Processing.js";
 import Analysis from "./Analysis.js";
 import Report from "./Report.js";
+
 function App() {
-  let [data, setData] = useState(null);
-  let [processingData, setProcessingData] = useState(null);
+  const [data, setData] = useState(null);
+  const [step, setStep] = useState(1);
+
+  const displayNextStep = () => {
+    if (step < 5) setStep(step + 1);
+  };
+
+  const displayPreviousStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
 
   return (
-    <div className="App">
+    <div className="App min-h-screen flex flex-col">
       <header className="App-header">
-        <Navbar/>
+        <Navbar />
       </header>
-      <main>
-        <UploadStep setData={setData}/>
-        {data && <Preview data={data}/>}
-        <Processing/>
-        <Analysis/>
-        <Report/>
 
+      <main className="flex-1 py-3">
+        {step === 1 && <UploadStep setData={setData} />}
+        {step === 2 && <Preview data={data} />}
+        {step === 3 && <Processing data ={data} />}
+        {step === 4 && <Analysis />}
+        {step === 5 && <Report />}
+
+        {/* Navigation buttons */}
+        <div className="flex">
+          {step > 1 && (
+            <button
+              onClick={displayPreviousStep}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mr-auto"
+            >
+              Back
+            </button>
+          )}
+
+          {step < 5 && (
+            <button
+              onClick={displayNextStep}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition ml-auto"
+            >
+              Next
+            </button>
+          )}
+        </div>
       </main>
     </div>
   );
