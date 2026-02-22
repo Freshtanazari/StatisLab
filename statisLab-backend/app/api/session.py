@@ -19,5 +19,4 @@ def createSession(request: Request):
     
     return {
         "sessionId": request.session["sessionId"],
-        "datasets": request.session["datasets"] 
         }

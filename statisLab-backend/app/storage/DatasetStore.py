@@ -1,4 +1,4 @@
-from models.Dataset import Dataset
+from ..models.Dataset import Dataset
 from typing import Dict
 
 class DatasetStore:

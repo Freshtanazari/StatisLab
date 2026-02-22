@@ -2,14 +2,37 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_categorical_dtype, is_object_dtype, is_bool_dtype
 from app.validators.columnValidator import columnExists
 from app.storage.DatasetStore import DatasetStore
+import io
 
 class preprocessor:
 
-    def __init__(self, sessionID: str, store: DatasetStore):
-        self.sessionID = sessionID
+    def __init__(self, sessionId: str, store: DatasetStore):
+        self.sessionID = sessionId
         self.store = store
-        self.dataset = store.getDataset(sessionID)  # get the dataset object
+        self.dataset = store.getDataset(self.sessionID)  # get the dataset object
         self.df = self.dataset.df_current
+    
+    def tableData(self):
+        result = {}
+        actions = ["changeDtype", "dropCol", "displayUnique", "renameCol"]
+        for col in self.df.columns:
+            result[col] = {
+                "name": col,
+                "type": str(self.df[col].dtype),
+                "nUnique": self.df[col].nunique(),
+                "missing": self.df[col].isna().mean() * 100,
+                "describe": "describe_numeric" if pd.api.types.is_numeric_dtype(self.df[col]) 
+                    else "describe_categorical",
+                "actions": actions
+            }
+        return result
+    # display uniques
+    def displayUnique(self, colName):
+        return self.df[colName].unique().tolist()
+    
+    def renameCol(self, colName, newName):
+        self.df.rename(columns ={colName : newName}, inplace=True)
+        return "name was updated"
     
     # change type of a column
     def changeDtype(self, colName, dType):
@@ -20,7 +43,20 @@ class preprocessor:
             return f"Column '{colName}' converted to {dType}"
         except (ValueError, TypeError):
             return f"Invalid conversion: column '{colName}' cannot be converted to {dType}"
-    
+        
+    #convert to numeric all possible columns 
+    def allToNumeric(self):
+        self.df = self.df.apply(pd.to_numeric, errors="ignore")
+        return "all possible columns changed to numeric data type"
+
+    # display information about the data
+    def displayInfo(self):
+        buffer = io.StringIO()
+        self.df.info(buf=buffer)
+        s = buffer.getvalue()
+        buffer.close()
+        return s
+
     # drop a column
     def dropCol(self, colName):
         if not columnExists(self.df, colName):
@@ -130,49 +166,95 @@ class preprocessor:
         self.df[colName].fillna(medianValue, inplace=True)   
         return f"Imputed Null values of the column {colName} with the median of {medianValue}."
 
-
-    def displayUnique(self, colName):
-        return self.df[colName].unique()
-    
-    def describe_numeric(self, colName) -> dict:
-        """return basic descriptive statistics for a numeric column."""
-        if not is_numeric_dtype(self.df[colName]):
-            raise TypeError(f"column {colName} should be Numeric type")
-
-        if colName not in self.df.columns: 
-            raise ValueError(f"column {colName} not found in DataFrame")
-        series = self.df[colName].dropna()
-        return {
-            "count": series.count(),
-            "mean": series.mean(),
-            "median": series.median(),
-            "std": series.std(),
-            "variance": series.var(),
-            "min": series.min(),
-            "max": series.max(),
-            "q1": series.quantile(0.25),
-            "q3": series.quantile(0.75),
-            "iqr": series.quantile(0.75) - series.quantile(0.25),
-            "missing_percent": self.df[colName].isna().mean() * 100
-        }
-    # categorical
-    def describe_categorical(self, colName) -> dict: 
-        if not (is_categorical_dtype(self.df[colName]) or 
-            is_object_dtype(self.df[colName]) or 
-            is_bool_dtype(self.df[colName])):
-            raise TypeError(f"column {colName} should be categorical-like")
-        
+    # Categorical column description
+    def describe_categorical(self, colName) -> dict:
         if colName not in self.df.columns:
             raise ValueError(f"column {colName} not found in DataFrame")
-        series = self.df[colName].dropna()
 
+        if not (is_categorical_dtype(self.df[colName]) or 
+                is_object_dtype(self.df[colName]) or 
+                is_bool_dtype(self.df[colName])):
+            raise TypeError(f"column {colName} should be categorical-like")
+        
+        series = self.df[colName].dropna()
+        value_counts = series.value_counts()
+        percentage = (series.value_counts(normalize=True) * 100).round(2)
+        
         return {
-            "unique_values": series.nunique(), 
-            "top" : series.mode()[0] if not series.empty else None,
-            "top_freq" : series.value_counts().iloc[0],
-            "value_counts" : series.value_counts().to_dict(),
-            "percentage" : (series.value_counts(normalize = True) * 100).round(2).to_dict()
+            "unique_values": int(series.nunique()),
+            "top": series.mode()[0].item() if not series.empty else None,
+            "top_freq": int(value_counts.iloc[0]) if not value_counts.empty else None,
+            "value_counts": {str(k): int(v) for k, v in value_counts.items()},
+            "percentage": {str(k): float(v) for k, v in percentage.items()}
         }
+
+
+    # Numeric column description
+    def describe_numeric(self, colName) -> dict:
+        if colName not in self.df.columns:
+            raise ValueError(f"column {colName} not found in DataFrame")
+        
+        if not is_numeric_dtype(self.df[colName]):
+            raise TypeError(f"column {colName} should be numeric")
+
+        series = self.df[colName].dropna()
+        
+        return {
+            "count": int(series.count()),
+            "mean": float(series.mean()),
+            "std": float(series.std()),
+            "min": float(series.min()),
+            "25%": float(series.quantile(0.25)),
+            "50%": float(series.median()),
+            "75%": float(series.quantile(0.75)),
+            "max": float(series.max())
+        }
+
+
+
+
+
+    
+    # def describe_numeric(self, colName) -> dict:
+    #     """return basic descriptive statistics for a numeric column."""
+    #     if not is_numeric_dtype(self.df[colName]):
+    #         raise TypeError(f"column {colName} should be Numeric type")
+
+    #     if colName not in self.df.columns: 
+    #         raise ValueError(f"column {colName} not found in DataFrame")
+    #     series = self.df[colName].dropna()
+    #     return {
+    #         "count": series.count(),
+    #         "mean": series.mean(),
+    #         "median": series.median(),
+    #         "std": series.std(),
+    #         "variance": series.var(),
+    #         "min": series.min(),
+    #         "max": series.max(),
+    #         "q1": series.quantile(0.25),
+    #         "q3": series.quantile(0.75),
+    #         "iqr": series.quantile(0.75) - series.quantile(0.25),
+    #         "missing_percent": self.df[colName].isna().mean() * 100
+    #     }
+    # # categorical
+    
+    # def describe_categorical(self, colName) -> dict: 
+    #     if not (is_categorical_dtype(self.df[colName]) or 
+    #         is_object_dtype(self.df[colName]) or 
+    #         is_bool_dtype(self.df[colName])):
+    #         raise TypeError(f"column {colName} should be categorical-like")
+        
+    #     if colName not in self.df.columns:
+    #         raise ValueError(f"column {colName} not found in DataFrame")
+    #     series = self.df[colName].dropna()
+
+    #     return {
+    #         "unique_values": series.nunique(), 
+    #         "top" : series.mode()[0] if not series.empty else None,
+    #         "top_freq" : series.value_counts().iloc[0],
+    #         "value_counts" : series.value_counts().to_dict(),
+    #         "percentage" : (series.value_counts(normalize = True) * 100).round(2).to_dict()
+    #     }
 
 
 

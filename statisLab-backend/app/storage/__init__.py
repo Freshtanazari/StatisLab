@@ -1,4 +1,4 @@
-from .datasetStore import DatasetStore
+from .DatasetStore import DatasetStore
 
 Store = DatasetStore()  # singleton where only one instance of this class is ever
 # meant to ever exist for the whole program

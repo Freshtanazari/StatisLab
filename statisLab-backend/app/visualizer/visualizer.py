@@ -13,10 +13,14 @@ class Visualizer:
         os.makedirs(self.save_dir, exist_ok=True)
         sns.set_theme(style=self.theme, palette=self.palette)
         # plt.style.use("classic")  # applies to all plots
+
     # helper function for saving the plots:
-    def save_plots(self, fig, plot_name, columns, file_suffix = None):
+    def save_plots(self, fig, plot_name, columns = None, file_suffix = None):
         if file_suffix is None:
-            file_suffix = "_".join(columns)
+            if columns:
+                file_suffix = "_".join(columns)
+            else:
+                file_suffix = "all"
         
         file_name = f"{plot_name}_{file_suffix}.png"
         save_path = os.path.join(self.save_dir, file_name)
@@ -33,52 +37,23 @@ class Visualizer:
         fig, ax = plt.subplots()
         sns.boxplot(y = self.df[col],color=sns.color_palette(self.palette)[0], ax = ax)
 
-        plotName = "boxplot"
-        fileName = f"{plotName}_{col}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        fig.savefig(savePath,bbox_inches="tight")
-        plt.close(fig)
-        return {
-            "plot_name": plotName, 
-            "plot_columns": [col],
-            "saved_path": savePath
-        }
+        return self.save_plots(fig, plot_name="boxplot", columns=[col])
 
     def histogram(self, col):
 
         fig, ax = plt.subplots()
         sns.histplot(x = self.df[col],color=sns.color_palette(self.palette)[0], ax = ax)
 
-        plotName = "histplot"
-        fileName = f"{plotName}_{col}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        fig.savefig(savePath,bbox_inches="tight")
-        plt.close(fig)
-        return {
-            "plot_name": plotName, 
-            "plot_columns": [col],
-            "saved_path": savePath
-        }
+        return self.save_plots(fig, plot_name="historgram", columns=[col])
+       
 
 
     def kde(self,col):
         fig, ax = plt.subplots()
         sns.kdeplot(x = self.df[col],color=sns.color_palette(self.palette)[0], ax = ax)
 
-        plotName = "kde"
-        fileName = f"{plotName}_{col}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        fig.savefig(savePath,bbox_inches="tight")
-        plt.close(fig)
-        return {
-            "plot_name": plotName, 
-            "plot_columns": [col],
-            "saved_path": savePath
-        }
-
+        return self.save_plots(fig, plot_name="kde", columns=[col])
+    
 
     def barplot(self, col):
         fig, ax = plt.subplots()
@@ -90,17 +65,7 @@ class Visualizer:
         ax.set_ylabel("count")
         ax.set_title(f"Barplot of {col}")
 
-        plotName = "barplot"
-        fileName = f"{plotName}_{col}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        fig.savefig(savePath,bbox_inches="tight")
-        plt.close(fig)
-        return {
-            "plot_name": plotName, 
-            "plot_columns": [col],
-            "saved_path": savePath
-        }
+        return self.save_plots(fig, plot_name="barplot", columns=[col])
 
 
     def pieChart(self, col):
@@ -118,18 +83,8 @@ class Visualizer:
         )
         ax.set_title(f"pie chart of {col}")
         ax.axis("equal")
-        plotName = "piechart"
-        fileName = f"{plotName}_{col}.png"
-        savePath = os.path.join(self.save_dir, fileName)
+        return self.save_plots(fig, plot_name="pie_chart", columns=[col])
 
-        fig.savefig(savePath, bbox_inches="tight")
-        plt.close(fig)
-
-        return {
-            "plot_name": plotName,
-            "plot_columns": [col],
-            "canvas_path": savePath
-        }
 
 #bivariate plots 
 
@@ -145,19 +100,7 @@ class Visualizer:
         ax.set_title(f"Scatterplot of {ycol} vs {xcol}")
 
         # save the figure 
-        plotName = "scatterplot"
-        fileName = f"{plotName}_{xcol}_vs_{ycol}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        fig.savefig(savePath, bbox_inches="tight")
-        plt.close(fig)
-
-        # return
-        return {
-            "plot_name": plotName, 
-            "plot_columns": [xcol, ycol],
-            "saved_path": savePath
-        }
+        return self.save_plots(fig, plot_name="scatterplot", columns=[xcol, ycol])
 
     def lineplot(self, xcol, ycol):
 
@@ -171,19 +114,7 @@ class Visualizer:
         ax.set_title(f"Lineplot of {ycol} vs {xcol}")
 
         # save the figure 
-        plotName = "lineplot"
-        fileName = f"{plotName}_{xcol}_vs_{ycol}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        fig.savefig(savePath, bbox_inches="tight")
-        plt.close(fig)
-
-        # return
-        return {
-            "plot_name": plotName, 
-            "plot_columns": [xcol, ycol],
-            "saved_path": savePath
-        }
+        return self.save_plots(fig, plot_name="lineplot", columns=[xcol, ycol])
 
     def violinplot(self, numericCol, categoricCol):
         if numericCol not in self.df.columns:
@@ -200,17 +131,8 @@ class Visualizer:
             fileSuffix = numericCol
         
         ax.set_title("violin plot")
-        plotName = "violinplot"
-        fileName = f"{plotName}_{fileSuffix}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-        fig.savefig(savePath, bbox_inches="tight")
-        plt.close(fig)
 
-        return {
-            "plot_name": plotName,
-            "plot_columns": plotColumns,
-            "saved_path": savePath
-        }
+        return self.save_plots(fig, plot_name="violinplot", columns=[numericCol, categoricCol])
 
 
 # multivariate plots
@@ -221,18 +143,8 @@ class Visualizer:
             raise ValueError("No numeric columns available")
         
         g = sns.pairplot(numericDf, diag_kind="hist", palette= self.palette)
-        plotName = "pairplot"
-        fileName = f"{plotName}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-
-        g.savefig(savePath, bbox_inches="tight")
-        plt.close()
-        # return info
-        return {
-            "plot_name": plotName,
-            "plot_columns": numericDf.columns.tolist(),
-            "saved_path": savePath
-        }
+        fig = g.figure
+        return self.save_plots(fig, plot_name="pairplot", columns=numericDf.columns.tolist())
 
     def heatmap(self):
 
@@ -246,18 +158,7 @@ class Visualizer:
 
         ax.set_title("Correlation heatmap")
 
-        plotName = "heatmap"
-        fileName = f"{plotName}.png"
-        savePath = os.path.join(self.save_dir, fileName)
-        fig.savefig(savePath, bbox_inches="tight")
-        plt.close(fig)
-
-        return {
-            "plot_name": plotName,
-            "plot_columns": numericDf.columns.tolist(),
-            "saved_path": savePath
-        }
-
+        return self.save_plots(fig, plot_name="heatmap")
 
     def catplot(self):
         pass

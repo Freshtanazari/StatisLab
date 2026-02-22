@@ -12,7 +12,7 @@ class Dataset():
 
     def keepSchema(self):
         schema = {}
-        for col in self.def_orginal.columns:
+        for col in self.df_orginal.columns:
             schema[col] = str(self.df_orginal[col].dtype)
         return schema
     
