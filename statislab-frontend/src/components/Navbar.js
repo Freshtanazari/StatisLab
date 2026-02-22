@@ -3,14 +3,14 @@ import React from "react";
 // Step component
 const Step = ({ number, label, active }) => {
   return (
-    <div className="flex flex-col items-center text-xs">
+    <div className="flex flex-col items-center">
       <div
-        className={`w-6 h-6 rounded-full flex items-center justify-center font-semibold text-white transition-colors duration-300
+        className={`w-4 h-4 rounded-full flex items-center justify-center text-white transition-colors duration-300
           ${active ? "bg-green-500" : "bg-blue-500"}`}
       >
         {number}
       </div>
-      <span className="mt-1 capitalize">{label}</span>
+      <span>{label}</span>
     </div>
   );
 };
@@ -18,9 +18,9 @@ const Step = ({ number, label, active }) => {
 // Navbar with steps
 const Navbar = ({ steps, currentStep }) => {
   return (
-    <div className="bg-white shadow-md py-2 px-4 flex items-center justify-between">
+    <div className="bg-white shadow-sm py-1 px-2 flex items-center justify-between">
       {/* App name */}
-      <div className="text-lg font-semibold">StatisLab</div>
+      <div className="text-sm font-semibold">StatisLab</div>
 
       {/* Step progress */}
       <div className="flex space-x-4 items-center">

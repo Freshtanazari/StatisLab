@@ -1,7 +1,7 @@
 import pandas as pd
 from fastapi import UploadFile
 
-def previewFile(df: pd.DataFrame, n: int = 10):
+def previewFile(df: pd.DataFrame, n: int = 10): # returns a list
     """
     Return a preview of the uploaded CSV file.
 
@@ -48,6 +48,18 @@ def getColsTypes(df):
         else:
             types[str(df[col].dtype)] = 1
     return types
+
+# getting the data types of the columns
+def getDataTypes(df):
+    return {col: str(df[col].dtype) for col in df.columns}
+
+# getting the overall missingness percentage in the whole dataframe
+def getMissingPercentage(df):
+    totalCells = df.size()
+    totalMissing = df.isna().sum().sum()
+    percentage = totalMissing / totalCells
+    return percentage
+
 
 
 
