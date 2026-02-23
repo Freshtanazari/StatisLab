@@ -2,88 +2,80 @@ import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit, FaExchangeAlt } from "react-icons/fa"; // FontAwesome icons
 import { FaEye } from "react-icons/fa"; // FontAwesome eye icon
 import Modal from "./components/Modal";
+import axios from "axios";
 
 const Processing = ({ data }) => {
-  let [sessionId, setSessionId] = useState(null);
+  // modal open or not
   const [open, setOpen] = useState(false);
-  const [modalData, setModalData] = useState(null);
+  // the table data we get from backend for display
   const [tableData, setTableData] = useState(null);
+  // data model problem
+  // const columnsArray = tableData?.columns 
   const columnsArray = tableData ? Object.values(tableData) : [];
+  // if actions need input 
   const [needInput, setNeedInput] = useState(false);
+  // if we need to update the table
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  // the action that is waiting for confirmation
   const [pendingAction, setPendingAction] = useState(null);
-  // const [inputValue, setInputValue] = useState("");
 
-// every time the data changes update the sessionId --> initial session / dataset load
-useEffect(() => {
-  // we use optional chaining to safely acces sessionID if data is not null or undefined
-  // bad alternative data.sessionId
-  if (data?.sessionId) {
-    setSessionId(data.sessionId);
-  }
-}, [data]);
 
 // every time the sessionId or refreshTrigger changes, fetch the table data to keep it updated
 //refreshtrigger is used to update the table after changes the user make
 useEffect(() => {
-  const fetchTableData = async () => {
-    if (!sessionId) return;
-    try {
-      const response = await fetch("http://localhost:8000/preprocess", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId: sessionId,
-          action: "tableData",
-          params: null,
-        }),
-      });
+  // we can see the 
+  const sessionId = data?.sessionId; // current sessionId
+  if(!sessionId) return;
 
-      if (!response.ok) {
-        console.log("Request failed");
-        return;
-      }
+  const fetchData = async () => {
+    try{
+    const response = await axios.post("http://localhost:8000/preprocess", {
+      sessionId: sessionId, 
+      action: "tableData", 
+      params: null,
+    });
 
-      const message = await response.json();
-      setTableData(message);
-      console.log("Updated table data:", message);
-    } catch (err) {
-      console.error("Error fetching table data:", err);
+    // access the data 
+    setTableData(response.data);
+    console.log("Updated table data:", response.data);
+    }catch(err){
+      console.error("error fetching tabel data:", err);
     }
-  };
+  }
+    fetchData();
+  }, [data?.sessionId, refreshTrigger]);
 
-  fetchTableData();
-}, [sessionId, refreshTrigger]);
-
+  
 
   const logReports = [
     { id: 1, time: "09:12", details: 'You deleted the column "age"' },
   ];
+
   // staging action
   function stageAction(
     action,
     params = {},
     prompt = "are you sure you want to apply the action?",
   ) {
-    setPendingAction({ action, params });
-    setModalData(prompt);
-    setInputValue("");
+    setPendingAction({ action, params, prompt });
     setOpen(true);
   }
 
   return (
     <div className=" bg-gray-100 ">
+    {/* modal for confirmation and input */}
       <Modal
         isOpen={open}
-        sessionId={sessionId}
+        sessionId={data?.sessionId}
         action={pendingAction?.action}
         params={pendingAction?.params}
         needInput={needInput}
-        message={modalData}
+        message={pendingAction?.prompt}
         onClose={() => {
           setOpen(false);
           setPendingAction(null);
           setRefreshTrigger((prev) => prev + 1); // refresh table after action
+          setNeedInput(false);
         }}
       />
 
@@ -98,8 +90,7 @@ useEffect(() => {
             {
               label: "Drop Null Values",
               onClick: () => {
-                stageAction("dropAllNulls");
-                setOpen(true);
+                stageAction("dropAllNulls",{},  prompt = "All rows with null values will be dropped.");
                 setNeedInput(false);
               },
             },
@@ -108,32 +99,28 @@ useEffect(() => {
               onClick: () => {
                 stageAction("interpolateMissing", {
                   method: "linear",
-                });
-                setOpen(true);
+                }, prompt = "Null values will be interpolated across entire dataset.");
                 setNeedInput(false);
               },
             },
             {
               label: "Drop Duplicates",
               onClick: () => {
-                stageAction("dropDuplicates");
-                setOpen(true);
+                stageAction("dropDuplicates", {}, prompt = "All duplicate rows will be dropped.");
                 setNeedInput(false);
               },
             },
             {
               label: "Convert to Numeric",
               onClick: () => {
-                stageAction("allToNumeric");
-                setOpen(true);
+                stageAction("allToNumeric", {},prompt = "All Columns will be converted to numeric type if possible.");
                 setNeedInput(false);
               },
             },
             {
               label: "Display Info",
               onClick: () => {
-                stageAction("displayInfo");
-                setOpen(true);
+                stageAction("displayInfo", {}, prompt = "Display Information of the dataset.");
                 setNeedInput(false);
               },
             },
@@ -183,7 +170,12 @@ useEffect(() => {
                   </td>
                   <td className="px-4 py-2">
                     {col.missing}%
-                    <button className="bg-yellow-200 text-yellow-800 rounded-sm px-2 ml-2 cursor-pointer">
+                    <button 
+                    className="bg-yellow-200 text-yellow-800 rounded-sm px-2 ml-2 cursor-pointer"
+                     onClick={() => {
+                        stageAction("handleMissing", { colName: col.name }, "Choose the correct method to handle the null values.");
+                      }}
+                      >
                       Fix
                     </button>
                   </td>
@@ -192,8 +184,7 @@ useEffect(() => {
                     <FaEye
                       className="text-black-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("displayUnique", { colName: col.name });
-                        setOpen(true);
+                        stageAction("displayUnique", { colName: col.name }, prompt = "Display all the unique values in the column.");
                         setNeedInput(false);
                       }}
                     ></FaEye>
@@ -203,7 +194,7 @@ useEffect(() => {
                       onClick={() =>
                         stageAction(col.describe.toString(), {
                           colName: col.name,
-                        })
+                        }, prompt = "display the description of the column")
                       }
                     >
                       {col.describe}
@@ -213,23 +204,21 @@ useEffect(() => {
                     <FaTrash
                       className="text-red-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("dropCol", { colName: col.name });
-                        setOpen(true);
+                        stageAction("dropCol", { colName: col.name }, prompt = "The column will be deleted");
+                        setNeedInput(false);
                       }}
                     />
                     <FaEdit
                       className="text-yellow-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("renameCol", { colName: col.name });
-                        setOpen(true);
+                        stageAction("renameCol", { colName: col.name }, prompt="Enter the new name for the column: ");
                         setNeedInput(true);
                       }}
                     />
                     <FaExchangeAlt
                       className="text-blue-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("changeType", { colName: col.name });
-                        setOpen(true);
+                        stageAction("changeDtype", { colName: col.name }, prompt = "Choose the new column type: ");
                         setNeedInput(true);
                       }}
                     />
