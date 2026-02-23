@@ -85,8 +85,12 @@ async def run_action(request: PreprocessRequest):
 
     try: 
         # call the method
+        print("we have called the method with params" + str(request.params))
         result = method(**(request.params or {}))
+        print("resutlt is " + str(result))
     except Exception as e:
+        print(e)
+        print(e)
         return{"error": str(e)}
     
     return {

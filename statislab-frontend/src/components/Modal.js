@@ -12,6 +12,8 @@ const Modal = ({
   const [inputValue, setInputValue] = useState("");
   const [stage, setStage] = useState("confirm");
   const [result, setResult] = useState(null);
+  // const [selection, setSelection] = useState(false);
+  const selection = action === "handleMissing";
 
   if (!isOpen) return null;
 
@@ -24,8 +26,12 @@ const Modal = ({
       finalParams.newName = inputValue || finalParams.colName; // use colName as fallback
     }
 
-    if (action === "changeType") {
-      finalParams.newType = inputValue || finalParams.newType; // match backend param
+    if (action === "changeDtype") {
+      finalParams.dType = inputValue || finalParams.dType; // match backend param
+    }
+    if (action === "handleMissing") {
+      // setSelection(true);
+      action = inputValue
     }
 
     try {
@@ -53,6 +59,7 @@ const Modal = ({
     setStage("confirm");
     setInputValue("");
     setResult(null);
+    // setSelection(false);
     onClose();
   };
 
@@ -61,7 +68,39 @@ const Modal = ({
       <div className="bg-white p-6 rounded shadow-lg w-96">
         {stage === "confirm" && (
           <>
-            <h2 className="text-lg font-bold mb-4">Action</h2>
+            {selection && (
+              <>
+                <p className="mb-2">{message}</p>
+                <select className="border p-2 my-2 rounded"
+                value={inputValue} 
+                onChange = { (e) => setInputValue(e.target.value)}>
+                  <option
+                    value=""
+                  >
+                    Select a Method
+                  </option>
+                  <option
+                    value="dropNullsFromCol"
+                  >
+                    Drop
+                  </option>
+                  <option
+                    value="ImputeMeanNumeric"
+                  >
+                    Mean Imputation (Numeric columns only)
+                  </option>
+                  <option
+                    value="ImputeMedianNumeric"
+                  >
+                    Median Imputation (Numeric Columns only)
+                  </option>
+                  <option value="ImputeByMode">Mode Imputation (categorical)</option>
+                  <option value="ImputeByConstant">Constant Imputation</option>
+                  <option value="ImputeBybfill">Backward fill Imputation</option>
+                  <option value="ImputeByffill">Forward fill Imputation</option>
+                </select>
+              </>
+            )}
             {needInput && (
               <>
                 <p className="mb-2">{message}</p>
@@ -74,19 +113,19 @@ const Modal = ({
                 />
               </>
             )}
-            {!needInput && <p className="mb-4">{message}</p>}
-            <div className="flex justify-end gap-2">
+            {!needInput && <p className="mb-2">{message}</p>}
+            <div className="flex justify-between">
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={runAction}
-              >
-                Confirm
-              </button>
-              <button
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="bg-gray-300 px-2 py-1 rounded"
                 onClick={handleClose}
               >
                 Cancel
+              </button>
+              <button
+                className="bg-blue-500 text-white px-2 py-1 rounded"
+                onClick={runAction}
+              >
+                Confirm
               </button>
             </div>
           </>
@@ -94,13 +133,13 @@ const Modal = ({
 
         {stage === "result" && (
           <>
-            <h2 className="text-lg font-bold mb-4">Result</h2>
-            <pre className="bg-gray-100 p-2 rounded">
+            <h2 className="text-sm text-center mb-4">Result</h2>
+            <pre className="bg-gray-100 p-2 rounded w-auto overflow-y-auto">
               {JSON.stringify(result, null, 2)}
             </pre>
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end mt-2">
               <button
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="bg-gray-300 px-2 py-1 rounded"
                 onClick={handleClose}
               >
                 Close
