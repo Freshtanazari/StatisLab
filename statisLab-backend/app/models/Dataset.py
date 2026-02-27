@@ -1,4 +1,5 @@
 import pandas as pd
+from .Report import report
 
 class Dataset():
     """
@@ -8,7 +9,9 @@ class Dataset():
     def __init__(self, df: pd.DataFrame):
         self.df_orginal = df
         self.df_current = df.copy()
+        self.audit_log = []
         self.schema = self.keepSchema()
+        self.report = report()
 
     def keepSchema(self):
         schema = {}

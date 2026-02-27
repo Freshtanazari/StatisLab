@@ -109,65 +109,112 @@
   },
   {
     "section": "Data Visualization",
-    "step": "Histograms for numerical data",
+    "step": "Histogram",
+    "action": "histogram",
+    "params": ["col"],
     "minColumns": 1,
-    "maxColumns": 5,
+    "maxColumns": 1,
     "columnTypes": "numeric",
-    "requirements": ["columns", "bins", "optional hue/grouping"],
-    "displayOptions": ["color_palette", "edgecolor", "hist_type", "alpha"]
+    "requirements": ["col"],
+    "displayOptions": ["palette", "theme"]
   },
   {
     "section": "Data Visualization",
-    "step": "Boxplots to identify outliers",
+    "step": "Boxplot",
+    "action": "boxplot",
+    "params": ["col"],
     "minColumns": 1,
-    "maxColumns": 2,
-    "columnTypes": "numeric (optional categorical for grouping)",
-    "requirements": ["numeric column", "optional categorical column for hue/grouping"],
-    "displayOptions": ["color_palette", "marker", "line_style"]
+    "maxColumns": 1,
+    "columnTypes": "numeric",
+    "requirements": ["col"],
+    "displayOptions": ["palette", "theme"]
   },
   {
     "section": "Data Visualization",
-    "step": "Bar charts for categorical data",
+    "step": "KDE Plot",
+    "action": "kde",
+    "params": ["col"],
+    "minColumns": 1,
+    "maxColumns": 1,
+    "columnTypes": "numeric",
+    "requirements": ["col"],
+    "displayOptions": ["palette", "theme"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Bar Chart",
+    "action": "barplot",
+    "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "categorical",
-    "requirements": ["column", "optional hue/grouping"],
-    "displayOptions": ["color_palette", "bar_style", "alpha"]
+    "requirements": ["col"],
+    "displayOptions": ["palette", "theme"]
   },
   {
     "section": "Data Visualization",
-    "step": "Scatter plots for relationships",
+    "step": "Pie Chart",
+    "action": "pieChart",
+    "params": ["col"],
+    "minColumns": 1,
+    "maxColumns": 1,
+    "columnTypes": "categorical",
+    "requirements": ["col"],
+    "displayOptions": ["palette", "theme"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Scatter Plot",
+    "action": "scatterplot",
+    "params": ["xcol", "ycol"],
     "minColumns": 2,
     "maxColumns": 2,
-    "columnTypes": "numeric (optional categorical for color/grouping)",
-    "requirements": ["x column", "y column", "optional hue/grouping"],
-    "displayOptions": ["color_palette", "marker", "size", "alpha"]
+    "columnTypes": "numeric",
+    "requirements": ["xcol", "ycol"],
+    "displayOptions": ["palette", "theme"]
   },
   {
     "section": "Data Visualization",
-    "step": "Heatmaps for correlations",
+    "step": "Line Plot",
+    "action": "lineplot",
+    "params": ["xcol", "ycol"],
+    "minColumns": 2,
+    "maxColumns": 2,
+    "columnTypes": "numeric",
+    "requirements": ["xcol", "ycol"],
+    "displayOptions": ["palette", "theme"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Violin Plot",
+    "action": "violinplot",
+    "params": ["numericCol", "categoricCol"],
+    "minColumns": 1,
+    "maxColumns": 2,
+    "columnTypes": "numeric + optional categorical",
+    "requirements": ["numericCol", "categoricCol optional"],
+    "displayOptions": ["palette", "theme"]
+  },
+  {
+    "section": "Data Visualization",
+    "step": "Pair Plot",
+    "action": "pairplot",
+    "params": [],
     "minColumns": 2,
     "maxColumns": 20,
     "columnTypes": "numeric",
-    "requirements": ["numeric columns", "correlation method: Pearson/Spearman"],
-    "displayOptions": ["color_palette", "annot", "linewidths", "linecolor"]
+    "requirements": [],
+    "displayOptions": ["palette", "theme"]
   },
   {
     "section": "Data Visualization",
-    "step": "Line plots for trends over time",
-    "minColumns": 2,
-    "maxColumns": 2,
-    "columnTypes": "numeric vs datetime",
-    "requirements": ["x datetime column", "y numeric column(s)", "optional hue/grouping"],
-    "displayOptions": ["color_palette", "marker", "line_style", "alpha"]
-  },
-  {
-    "section": "Data Visualization",
-    "step": "Pair plots for multivariate exploration",
+    "step": "Correlation Heatmap",
+    "action": "heatmap",
+    "params": [],
     "minColumns": 2,
     "maxColumns": 20,
-    "columnTypes": "numeric (optional categorical for hue/grouping)",
-    "requirements": ["numeric columns", "optional categorical for hue/grouping"],
-    "displayOptions": ["color_palette", "marker", "line_style", "alpha"]
+    "columnTypes": "numeric",
+    "requirements": [],
+    "displayOptions": ["palette", "theme"]
   }
 ]

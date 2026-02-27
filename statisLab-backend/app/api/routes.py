@@ -10,6 +10,8 @@ from ..services.preview import getPercentageMissing
 from ..services.preview import getDataTypes
 from ..services.preprocessor import preprocessor
 from typing import Optional, Dict
+from io import BytesIO
+from fastapi.responses import StreamingResponse
 
 
 import uuid
@@ -88,6 +90,7 @@ async def run_action(request: PreprocessRequest):
         print("we have called the method with params" + str(request.params))
         result = method(**(request.params or {}))
         print("resutlt is " + str(result))
+        print(request)
     except Exception as e:
         print(e)
         print(e)
@@ -95,7 +98,6 @@ async def run_action(request: PreprocessRequest):
     
     return {
         "message" : result,
-        "columns": list(prep.df.columns),
     }
 
 @router.post("/preprocess")
@@ -114,8 +116,66 @@ async def getTableData(request: PreprocessRequest):
     
     return result
 
+class downloadRequest(BaseModel):
+    sessionId : str
 
+@router.post("/download_audit")
+async def download_audit(request: downloadRequest):
+    try: 
+        sessionId = request.sessionId
+        prep = preprocessor(sessionId=sessionId, store=dataset_store)
+    except Exception as e:
+        return {"error": str(e)}
+    # call the method
 
+    audit_log = prep.display_audit_log()  # Your method to fetch logs
+    df = pd.DataFrame(audit_log)
+    print(df)
+    output = BytesIO()
+    df.to_excel(output, index=False, engine="openpyxl")
+    output.seek(0)
+    
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename=audit_.xlsx"}
+    )
+
+class VisualizerRequest(BaseModel):
+    sessionId : str
+    action : str
+    params: Optional[Dict] = None  # method parameters, if any although will be there
+
+@router.post("/preprocess/action")
+
+async def run_action(request: PreprocessRequest):
+
+    # create preprecessor instacne 
+    try:
+        analyzer = analyzer(sessionId = request.sessionId, store = dataset_store)
+    except Exception as e:
+        return {"error": str(e)}
+    
+    # validate the method 
+    if not hasattr(analyzer, request.action):
+        return {"error": f"action {request.action} not found"}
+    
+    method = getattr(analyzer, request.action)
+
+    try: 
+        # call the method
+        print("we have called the method with params" + str(request.params))
+        result = method(**(request.params or {}))
+        print("resutlt is " + str(result))
+        print(request)
+    except Exception as e:
+        print(e)
+        print(e)
+        return{"error": str(e)}
+    
+    return {
+        result
+    }
 
 @router.get("/status")
 
