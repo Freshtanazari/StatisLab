@@ -18,7 +18,10 @@ const Processing = ({ data }) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   // the action that is waiting for confirmation
   const [pendingAction, setPendingAction] = useState(null);
-
+  // log data for display
+  const [logData, setLogData] = useState(null);
+  // current log index for pagination
+  const [currentLog, setCurrentLog] = useState(0);
 
 // every time the sessionId or refreshTrigger changes, fetch the table data to keep it updated
 //refreshtrigger is used to update the table after changes the user make
@@ -34,10 +37,19 @@ useEffect(() => {
       action: "tableData", 
       params: null,
     });
-
     // access the data 
     setTableData(response.data);
     console.log("Updated table data:", response.data);
+
+    // getting the report data for logging
+    const audit = await axios.post("http://127.0.0.1:8000/preprocess/action", {
+      sessionId: sessionId, 
+      action:"display_audit_log", 
+      params: null,
+    });
+    setLogData(audit.data.message);
+    console.log("updated log data: thisis ", logData);
+    setCurrentLog(audit.data.message ? Object.values(audit.data.message).length - 1 : 0); // set to the latest log
     }catch(err){
       console.error("error fetching tabel data:", err);
     }
@@ -47,9 +59,7 @@ useEffect(() => {
 
   
 
-  const logReports = [
-    { id: 1, time: "09:12", details: 'You deleted the column "age"' },
-  ];
+  const logReports = logData ? Object.values(logData) : [{ timestamp: "N/A", details : "Nothing to display"}];
 
   // staging action
   function stageAction(
@@ -59,6 +69,30 @@ useEffect(() => {
   ) {
     setPendingAction({ action, params, prompt });
     setOpen(true);
+  }
+  // handle exporting logs
+  async function handleExport(){
+    if(! logData){
+      alert("No logs to export!");
+    }
+    try {
+      const sessionId = data?.sessionId;
+      const response = await axios.post("http://localhost:8000/download_audit",{
+        sessionId: sessionId }
+        ,{
+        responseType: "blob", // for file download
+      })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "audit_logs.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }catch(err){
+      console.error("error exporting the logs", err);
+      alert("failed ot expoert")
+    }
   }
 
   return (
@@ -190,9 +224,10 @@ useEffect(() => {
                     ></FaEye>
                   </td>
                   <td className="px-4 py-2">
-                    <button
+                    <button className="bg-blue-300 rounded-sm px-2 cursor-pointer"
                       onClick={() =>
                         stageAction(col.describe.toString(), {
+
                           colName: col.name,
                         }, prompt = "display the description of the column")
                       }
@@ -232,20 +267,30 @@ useEffect(() => {
 
       {/* Loggings */}
       <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md ">
-        <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">
+        <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onClick={()=> {
+          if (currentLog > 0){
+            setCurrentLog(currentLog -1)    
+          } 
+        }}>
           &larr;
         </button>
         <div className="flex-1 mx-4 overflow-x-auto whitespace-nowrap text-center">
-          {logReports.map((log) => (
-            <span key={log.id} className="inline-block mx-2 text-gray-700">
-              {log.time}: {log.details}
+          {logReports.length > 0 ? (
+            <span  className="inline-block mx-2 text-gray-700">
+              {logReports[currentLog].timestamp} : {logReports[currentLog].details}
             </span>
-          ))}
+          ): (
+            <span className="inline-block mx-2 text-gray-700"> No logs for display</span>
+          )}
+
         </div>
-        <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">
+        <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onClick={()=> {
+          if (currentLog < logReports.length - 1) {
+            setCurrentLog(currentLog + 1)
+          }}}>
           &rarr;
         </button>
-        <button className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        <button onClick={handleExport}className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
           Export Logs
         </button>
       </div>

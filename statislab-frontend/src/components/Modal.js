@@ -4,7 +4,7 @@ const Modal = ({
   isOpen,
   onClose,
   action,
-  params,
+  params = {},
   needInput,
   sessionId,
   message,
@@ -12,46 +12,64 @@ const Modal = ({
   const [inputValue, setInputValue] = useState("");
   const [stage, setStage] = useState("confirm");
   const [result, setResult] = useState(null);
-  // const [selection, setSelection] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const selection = action === "handleMissing";
 
   if (!isOpen) return null;
 
   const runAction = async () => {
-    if (!action) return;
+    if (!action || loading) return;
+
+    // validation
+    if (selection && !inputValue) {
+      alert("Please select a method.");
+      return;
+    }
+
+    if (needInput && !inputValue.trim()) {
+      alert("Please enter a value.");
+      return;
+    }
 
     const finalParams = { ...params };
+    const finalAction = selection ? inputValue : action;
 
     if (action === "renameCol") {
-      finalParams.newName = inputValue || finalParams.colName; // use colName as fallback
+      finalParams.newName = inputValue || finalParams.colName;
     }
 
     if (action === "changeDtype") {
-      finalParams.dType = inputValue || finalParams.dType; // match backend param
-    }
-    if (action === "handleMissing") {
-      // setSelection(true);
-      action = inputValue
+      finalParams.dType = inputValue || finalParams.dType;
     }
 
     try {
+      setLoading(true);
+
       const res = await fetch("http://127.0.0.1:8000/preprocess/action", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId,
-          action,
+          action: finalAction,
           params: finalParams,
         }),
       });
+
+      if (!res.ok) {
+        throw new Error("Server error");
+      }
+
       const data = await res.json();
 
-      setResult(data.message || "Action completed");
-      setStage("result"); // move to result stage
+      setResult(JSON.stringify(data.message) || "Action completed");
+      setStage("result");
     } catch (err) {
       console.error("Error running action:", err);
-      setResult("Error occurred");
+      setResult("Something went wrong.");
       setStage("result");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,49 +77,38 @@ const Modal = ({
     setStage("confirm");
     setInputValue("");
     setResult(null);
-    // setSelection(false);
+    setLoading(false);
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white p-6 rounded shadow-lg w-96">
+      <div className="bg-white p-6 rounded shadow-lg w-[600px] max-w-[90vw]">
         {stage === "confirm" && (
           <>
-            {selection && (
+            {selection ? (
               <>
                 <p className="mb-2">{message}</p>
-                <select className="border p-2 my-2 rounded"
-                value={inputValue} 
-                onChange = { (e) => setInputValue(e.target.value)}>
-                  <option
-                    value=""
-                  >
-                    Select a Method
+                <select
+                  className="border p-2 my-2 rounded w-full"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                >
+                  <option value="">Select a Method</option>
+                  <option value="dropNullsFromCol">Drop</option>
+                  <option value="imputeMeanNumeric">
+                    Mean Imputation (Numeric)
                   </option>
-                  <option
-                    value="dropNullsFromCol"
-                  >
-                    Drop
+                  <option value="imputeMedianNumeric">
+                    Median Imputation (Numeric)
                   </option>
-                  <option
-                    value="ImputeMeanNumeric"
-                  >
-                    Mean Imputation (Numeric columns only)
-                  </option>
-                  <option
-                    value="ImputeMedianNumeric"
-                  >
-                    Median Imputation (Numeric Columns only)
-                  </option>
-                  <option value="ImputeByMode">Mode Imputation (categorical)</option>
-                  <option value="ImputeByConstant">Constant Imputation</option>
-                  <option value="ImputeBybfill">Backward fill Imputation</option>
-                  <option value="ImputeByffill">Forward fill Imputation</option>
+                  <option value="imputeByMode">Mode Imputation</option>
+                  <option value="imputeByConstant">Constant Imputation</option>
+                  <option value="imputeBybfill">Backward Fill</option>
+                  <option value="imputeByffill">Forward Fill</option>
                 </select>
               </>
-            )}
-            {needInput && (
+            ) : needInput ? (
               <>
                 <p className="mb-2">{message}</p>
                 <input
@@ -112,20 +119,29 @@ const Modal = ({
                   placeholder="Enter value..."
                 />
               </>
+            ) : (
+              <p className="mb-2">{message}</p>
             )}
-            {!needInput && <p className="mb-2">{message}</p>}
+
             <div className="flex justify-between">
               <button
-                className="bg-gray-300 px-2 py-1 rounded"
+                className="bg-gray-300 px-3 py-1 rounded"
                 onClick={handleClose}
+                disabled={loading}
               >
                 Cancel
               </button>
+
               <button
-                className="bg-blue-500 text-white px-2 py-1 rounded"
+                className="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
                 onClick={runAction}
+                disabled={
+                  loading ||
+                  (selection && !inputValue) ||
+                  (needInput && !inputValue.trim())
+                }
               >
-                Confirm
+                {loading ? "Processing..." : "Confirm"}
               </button>
             </div>
           </>
@@ -133,13 +149,15 @@ const Modal = ({
 
         {stage === "result" && (
           <>
-            <h2 className="text-sm text-center mb-4">Result</h2>
-            <pre className="bg-gray-100 p-2 rounded w-auto overflow-y-auto">
-              {JSON.stringify(result, null, 2)}
+            <h2 className="text-sm text-center mb-4 font-semibold">
+              Result
+            </h2>
+            <pre className="bg-gray-100 p-2 rounded max-h-160 overflow-x-auto text-sm">
+              {result}
             </pre>
-            <div className="flex justify-end mt-2">
+            <div className="flex justify-end mt-3">
               <button
-                className="bg-gray-300 px-2 py-1 rounded"
+                className="bg-gray-300 px-3 py-1 rounded"
                 onClick={handleClose}
               >
                 Close

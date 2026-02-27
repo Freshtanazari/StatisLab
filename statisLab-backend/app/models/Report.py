@@ -1,7 +1,6 @@
-class Report:
+class report:
   
-    def __init__(self, sessionID):
-        self.sessionID = sessionID
+    def __init__(self):
         self.analyses = list()
 
     def addAnalysis(self, analysisResult):

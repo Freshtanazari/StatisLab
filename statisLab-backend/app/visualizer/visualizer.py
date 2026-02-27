@@ -2,11 +2,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+from app.models.Dataset import Dataset 
+
 
 class Visualizer:
     
-    def __init__(self, df, save_dir = "plots", palette="husl", theme="whitegrid"):
-        self.df = df
+    def __init__(self,sessionId,store, save_dir = "plots", palette="husl", theme="whitegrid"):
+        self.df = store.getDataset(sessionId).df_current
         self.save_dir = save_dir
         self.palette = palette
         self.theme = theme
