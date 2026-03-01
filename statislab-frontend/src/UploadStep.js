@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 
-export default function UploadStep({ setData }) {
+export default function UploadStep({ setData, setSessionId }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
@@ -38,6 +38,7 @@ export default function UploadStep({ setData }) {
       setLoading(true);
       const response = await axios.post("http://127.0.0.1:8000/upload", formData);
       setData(response.data);
+      setSessionId(response.data.sessionId)
       setValid(true);
     } catch (error) {
       let message = "Error uploading file";
