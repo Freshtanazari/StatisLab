@@ -1,12 +1,16 @@
-from StatisticalTest import StatisticalTest
+from .StatisticalTest import StatisticalTest
 from scipy.stats import wilcoxon
+from ..models.Dataset import Dataset
+from ..storage.DatasetStore import DatasetStore
 
 
 class WilcoxonSignedRankTest(StatisticalTest):
     " this si a non paremetica test equivalent to paird t-test. if the groups are related"
 
-    def __init__(self, df, col1, col2, alpha= 0.05):
-        self.df = df
+    def __init__(self, col1, col2,sessionId, store: DatasetStore, alpha= 0.05):
+        dataset = store.getDataset(sessionID=sessionId)
+        self.sessionId = sessionId
+        self.df = dataset.df_current # get the current dataset
         self.col1 = col1
         self.col2 = col2 
         self.alpha = alpha 
@@ -51,3 +55,5 @@ class WilcoxonSignedRankTest(StatisticalTest):
        return f"The median difference between {self.col1} and {self.col2} is zero (no change)."
     def alternativeHypothesis(self):
         return f"The median difference between {self.col1} and {self.col2} is not zero (change exists)."
+    def storeTest(result, sessionId, store):
+        pass 

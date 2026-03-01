@@ -1,13 +1,18 @@
 from scipy.stats import f_oneway
 from scipy.stats import shapiro,levene
-from StatisticalTest import StatisticalTest
+from .StatisticalTest import StatisticalTest
+from ..models.Dataset import Dataset
+from ..storage.DatasetStore import DatasetStore
+
 class OneWayANOVA(StatisticalTest):
     # NOTE . compares means of numeric variables across 3 or more independent groups
     # valueCol 
     # groupCol with 3 or more categories
 
-    def __init__(self,df, alpha, valueCol, groupCol):
-        self.df = df
+    def __init__(self, alpha, valueCol,sessionId, store: DatasetStore, groupCol):
+        dataset = store.getDataset(sessionID=sessionId)
+        self.sessionId = sessionId
+        self.df = dataset.df_current # get the current dataset
         self.alpha = alpha 
         self.valueCol = valueCol # should be numeric
         self.groupCol = groupCol
@@ -70,3 +75,6 @@ class OneWayANOVA(StatisticalTest):
 
     def alternativeHypothesis(self):
         return "At least one group mean is different."
+    
+    def storeTest(result, sessionId, store):
+        pass 

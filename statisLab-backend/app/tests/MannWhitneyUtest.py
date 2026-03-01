@@ -1,13 +1,17 @@
-from StatisticalTest import StatisticalTest
+from .StatisticalTest import StatisticalTest
 from scipy.stats import mannwhitneyu
+from ..models.Dataset import Dataset
+from ..storage.DatasetStore import DatasetStore
 
 
 class MannWhitneyUtest(StatisticalTest):
     "this is the non-parametric test equivalent to the independent t-test"
     "comparing two independent groups when assumption of normaltiy is violated"
 
-    def __init__(self, df, col1, col2, groupCol, alpha = 0.05):
-        self.df = df
+    def __init__(self, col1, col2, sessionId, store: DatasetStore, groupCol, alpha = 0.05):
+        dataset = store.getDataset(sessionID=sessionId)
+        self.sessionId = sessionId
+        self.df = dataset.df_current # get the current dataset
         self.col1 = col1
         self.col2 = col2 
         self.alpha = alpha 
@@ -29,7 +33,7 @@ class MannWhitneyUtest(StatisticalTest):
         group1 = self.df[self.df[self.groupCol] == self.groups[0]][self.col1]
         group2 = self.df[self.df[self.groupCol] == self.groups[1]][self.col1]
 
-        stat, pValue = manwhitneyu(group1, group2, alternative="two-sided")
+        stat, pValue = mannwhitneyu(group1, group2, alternative="two-sided")
 
         return {
             "test": "Mann-Whitney U Test", 
@@ -53,4 +57,5 @@ class MannWhitneyUtest(StatisticalTest):
 
     def alternativeHypothesis(self):
         return f"The distributions of {self.col1} in the two groups of {self.group_col} are not equal."
-     
+    def storeTest(result, sessionId, store):
+        pass 

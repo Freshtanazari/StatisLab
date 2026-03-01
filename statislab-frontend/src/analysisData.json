@@ -1,220 +1,262 @@
 [
   {
     "section": "Descriptive Analysis",
-    "step": "Inspect dataset structure (rows, columns, types)",
+    "name": "Inspect dataset structure (rows, columns, types)",
     "minColumns": 0,
     "maxColumns": 0,
     "columnTypes": "any",
     "requirements": [],
-    "displayOptions": []
+    "displayOptions": [],
+    "parametersNames": []
   },
   {
     "section": "Descriptive Analysis",
-    "step": "Summary statistics (mean, median, mode, std, min, max)",
+    "name": "Summary statistics (mean, median, mode, std, min, max)",
     "minColumns": 1,
     "maxColumns": 10,
     "columnTypes": "numeric (mode can also use categorical)",
-    "requirements": ["columns", "aggregate_method: mean/median/mode/std/min/max"],
-    "displayOptions": []
+    "requirements": [
+      "columns",
+      "aggregate_method: mean/median/mode/std/min/max"
+    ],
+    "displayOptions": [],
+    "parametersNames": ["columns", "aggregate_method"]
   },
   {
     "section": "Descriptive Analysis",
-    "step": "Check missing values",
+    "name": "Check missing values",
     "minColumns": 0,
     "maxColumns": 0,
     "columnTypes": "any",
     "requirements": ["columns optional"],
-    "displayOptions": []
+    "displayOptions": [],
+    "parametersNames": ["columns"]
   },
   {
     "section": "Descriptive Analysis",
-    "step": "Identify outliers",
+    "name": "Identify outliers",
     "minColumns": 1,
     "maxColumns": 5,
     "columnTypes": "numeric",
     "requirements": ["columns", "method: IQR/Z-score", "optional hue/grouping"],
-    "displayOptions": ["color", "marker"]
+    "displayOptions": ["color", "marker"],
+    "parametersNames": ["columns", "method", "hue"]
   },
   {
     "section": "Descriptive Analysis",
-    "step": "Explore categorical distributions (counts, frequency)",
+    "name": "Explore categorical distributions (counts, frequency)",
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "categorical",
     "requirements": ["column", "optional hue/grouping"],
-    "displayOptions": ["color", "bar_style"]
+    "displayOptions": ["color", "bar_style"],
+    "parametersNames": ["column", "hue"]
   },
   {
     "section": "Descriptive Analysis",
-    "step": "Explore numerical distributions (histogram, skewness, kurtosis)",
+    "name": "Explore numerical distributions (histogram, skewness, kurtosis)",
     "minColumns": 1,
     "maxColumns": 5,
     "columnTypes": "numeric",
     "requirements": ["columns", "bins", "optional hue/grouping"],
-    "displayOptions": ["color_palette", "edgecolor", "hist_type", "alpha"]
+    "displayOptions": ["color_palette", "edgecolor", "hist_type", "alpha"],
+    "parametersNames": ["columns", "bins", "hue"]
   },
   {
     "section": "Statistical Tests",
-    "step": "Check assumptions for tests (normality, variance)",
-    "minColumns": 1,
-    "maxColumns": 5,
-    "columnTypes": "numeric",
-    "requirements": ["columns", "normality test (Shapiro-Wilk)", "variance test (Levene)"],
-    "displayOptions": ["color"]
-  },
-  {
-    "section": "Statistical Tests",
-    "step": "t-test (one-sample, two-sample, paired)",
+    "name": "Independent t-test",
+    "action": "IndependentTTest",
+    "params": ["valueCol", "groupCol"],
     "minColumns": 1,
     "maxColumns": 2,
-    "columnTypes": "numeric (2 if using two-sample with grouping)",
-    "requirements": ["columns", "group column if two-sample", "test_type: one-sample/two-sample/paired"],
-    "displayOptions": ["color", "marker"]
+    "columnTypes": "numeric (2 if using grouping column)",
+    "requirements": ["columns", "group column", "test_type: independent"],
+    "displayOptions": ["color", "marker"],
+    "parametersNames": ["value Column", "Group Column"]
+  },
+
+  {
+    "section": "Statistical Tests",
+    "name": "Mann-Whitney U test",
+    "action": "MannWhitneyUTest",
+    "params": ["column", "group_column"],
+    "minColumns": 1,
+    "maxColumns": 2,
+    "columnTypes": "numeric (2 if using grouping column)",
+    "requirements": ["columns", "group column", "non-parametric test"],
+    "displayOptions": ["color", "marker"],
+    "parametersNames": ["column", "group_column"]
   },
   {
     "section": "Statistical Tests",
-    "step": "ANOVA (one-way, two-way)",
+    "name": "One-way ANOVA",
+    "action": "OneWayANOVA",
+    "params": ["dependent_column", "group_column"],
     "minColumns": 2,
     "maxColumns": 5,
     "columnTypes": "numeric dependent + categorical independent(s)",
-    "requirements": ["dependent column", "categorical independent(s)", "anova_type: one-way/two-way"],
-    "displayOptions": ["color", "marker"]
+    "requirements": [
+      "dependent column",
+      "categorical independent(s)",
+      "anova_type: one-way"
+    ],
+    "displayOptions": ["color", "marker"],
+    "parametersNames": ["dependent_column", "group_column"]
   },
   {
     "section": "Statistical Tests",
-    "step": "Chi-square test for categorical data",
+    "name": "Wilcoxon signed-rank test",
+    "action": "WilcoxonSignedRankTest",
+    "params": ["col1", "col2"],
+    "minColumns": 1,
+    "maxColumns": 2,
+    "columnTypes": "numeric (paired if 2 columns)",
+    "requirements": ["paired numeric columns", "non-parametric test"],
+    "displayOptions": ["color", "marker"],
+    "parametersNames": ["column1", "column2"]
+  },
+  {
+    "section": "Statistical Tests",
+    "name": "Paired t-test",
+    "action": "PairedTTest",
+    "params": ["col1", "col2"],
+    "minColumns": 2,
+    "maxColumns": 2,
+    "columnTypes": "numeric",
+    "requirements": ["paired numeric columns", "test_type: paired"],
+    "displayOptions": ["color", "marker"],
+    "parametersNames": ["column1", "column2"]
+  },
+  {
+    "section": "Statistical Tests",
+    "name": "Chi-square test for categorical data",
+    "action": "ChiSquareTest",
+    "params": ["col1", "col2"],
     "minColumns": 2,
     "maxColumns": 2,
     "columnTypes": "categorical",
     "requirements": ["two categorical columns"],
-    "displayOptions": ["color"]
-  },
-  {
-    "section": "Statistical Tests",
-    "step": "Correlation tests (Pearson, Spearman)",
-    "minColumns": 2,
-    "maxColumns": 2,
-    "columnTypes": "numeric",
-    "requirements": ["two numeric columns", "method: Pearson/Spearman"],
-    "displayOptions": ["color"]
-  },
-  {
-    "section": "Statistical Tests",
-    "step": "Regression analysis if applicable",
-    "minColumns": 2,
-    "maxColumns": 10,
-    "columnTypes": "numeric dependent + numeric or categorical independent(s)",
-    "requirements": ["dependent column", "independent columns", "optional categorical as dummy", "regression type: linear/multiple"],
-    "displayOptions": ["color", "marker", "line_style"]
+    "displayOptions": ["color"],
+    "parametersNames": ["column1", "column2"]
   },
   {
     "section": "Data Visualization",
-    "step": "Histogram",
+    "name": "Histogram",
     "action": "histogram",
     "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "numeric",
     "requirements": ["col"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["Column"]
   },
   {
     "section": "Data Visualization",
-    "step": "Boxplot",
+    "name": "Boxplot",
     "action": "boxplot",
     "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "numeric",
     "requirements": ["col"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["Column"]
   },
   {
     "section": "Data Visualization",
-    "step": "KDE Plot",
+    "name": "KDE Plot",
     "action": "kde",
     "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "numeric",
     "requirements": ["col"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["Column"]
   },
   {
     "section": "Data Visualization",
-    "step": "Bar Chart",
+    "name": "Bar Chart",
     "action": "barplot",
     "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "categorical",
     "requirements": ["col"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["Column"]
   },
   {
     "section": "Data Visualization",
-    "step": "Pie Chart",
+    "name": "Pie Chart",
     "action": "pieChart",
     "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "categorical",
     "requirements": ["col"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["Column"]
   },
   {
     "section": "Data Visualization",
-    "step": "Scatter Plot",
+    "name": "Scatter Plot",
     "action": "scatterplot",
     "params": ["xcol", "ycol"],
     "minColumns": 2,
     "maxColumns": 2,
     "columnTypes": "numeric",
     "requirements": ["xcol", "ycol"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["X-Axis", "Y-Axis"]
   },
   {
     "section": "Data Visualization",
-    "step": "Line Plot",
+    "name": "Line Plot",
     "action": "lineplot",
     "params": ["xcol", "ycol"],
     "minColumns": 2,
     "maxColumns": 2,
     "columnTypes": "numeric",
     "requirements": ["xcol", "ycol"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["X-Axis", "Y-Axis"]
   },
   {
     "section": "Data Visualization",
-    "step": "Violin Plot",
+    "name": "Violin Plot",
     "action": "violinplot",
     "params": ["numericCol", "categoricCol"],
     "minColumns": 1,
     "maxColumns": 2,
     "columnTypes": "numeric + optional categorical",
     "requirements": ["numericCol", "categoricCol optional"],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": ["Numerical Column", "Categorical Column"]
   },
   {
     "section": "Data Visualization",
-    "step": "Pair Plot",
+    "name": "Pair Plot",
     "action": "pairplot",
     "params": [],
     "minColumns": 2,
     "maxColumns": 20,
     "columnTypes": "numeric",
     "requirements": [],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": []
   },
   {
     "section": "Data Visualization",
-    "step": "Correlation Heatmap",
+    "name": "Correlation Heatmap",
     "action": "heatmap",
     "params": [],
     "minColumns": 2,
     "maxColumns": 20,
     "columnTypes": "numeric",
     "requirements": [],
-    "displayOptions": ["palette", "theme"]
+    "displayOptions": ["palette", "theme"],
+    "parametersNames": []
   }
 ]

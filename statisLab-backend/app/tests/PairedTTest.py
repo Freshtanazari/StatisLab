@@ -1,13 +1,18 @@
-from StatisticalTest import StatisticalTest
+from .StatisticalTest import StatisticalTest
 from scipy.stats import ttest_rel
 import numpy as np
 from scipy.stats import shapiro
+from ..models.Dataset import Dataset
+from ..storage.DatasetStore import DatasetStore
+
 
 class PairedTTest(StatisticalTest):
     # note : valueCol1(before) --> numeric col 
     # valueCol2(after) --> numeric col
-    def __init__(self,df, valueCol1, valueCol2, alpha):
-        self.df = df
+    def __init__(self, valueCol1,sessionId, store: DatasetStore, valueCol2, alpha):
+        dataset = store.getDataset(sessionID=sessionId)
+        self.sessionId = sessionId
+        self.df = dataset.df_current # get the current dataset
         self.valueCol1 = valueCol1
         self.valueCol2 = valueCol2 
         # get numeric cols as arrays
@@ -47,3 +52,5 @@ class PairedTTest(StatisticalTest):
         
     def alternativeHypothesis(self):
          return f"The mean of {self.valueCol1} is different from the mean of {self.valueCol2}."
+    def storeTest(result, sessionId, store):
+        pass 

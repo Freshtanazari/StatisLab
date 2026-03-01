@@ -12,7 +12,13 @@ from ..services.preprocessor import preprocessor
 from typing import Optional, Dict
 from io import BytesIO
 from fastapi.responses import StreamingResponse
-
+from ..visualizer import Visualizer
+from ..tests.chiSquareTest import ChiSquareTest
+from ..tests.IndependentTTest import IndependentTtest
+from ..tests.MannWhitneyUtest import MannWhitneyUtest
+from ..tests.OneWayANOVA import OneWayANOVA
+from ..tests.PairedTTest import PairedTTest
+from ..tests.WilcoxonSignedRankTest import WilcoxonSignedRankTest
 
 import uuid
 from fastapi import Request
@@ -141,18 +147,18 @@ async def download_audit(request: downloadRequest):
         headers={"Content-Disposition": f"attachment; filename=audit_.xlsx"}
     )
 
-class VisualizerRequest(BaseModel):
+class AnalysisRequest(BaseModel):
     sessionId : str
     action : str
     params: Optional[Dict] = None  # method parameters, if any although will be there
 
-@router.post("/preprocess/action")
+@router.post("/visualizer")
 
-async def run_action(request: PreprocessRequest):
+async def run_action(request: AnalysisRequest):
 
     # create preprecessor instacne 
     try:
-        analyzer = analyzer(sessionId = request.sessionId, store = dataset_store)
+        analyzer = Visualizer(sessionId = request.sessionId, store = dataset_store)
     except Exception as e:
         return {"error": str(e)}
     
@@ -174,10 +180,49 @@ async def run_action(request: PreprocessRequest):
         return{"error": str(e)}
     
     return {
-        result
+       "data": result
     }
 
-@router.get("/status")
+class AnalysisRequest(BaseModel):
+    sessionId : str
+    action : str
+    params: Optional[Dict] = None  # method parameters, if any although will be there
 
+@router.post("/Stest")
+async def run_action(request: AnalysisRequest):
+    ACTION_MAP = {
+        "ChiSquareTest": ChiSquareTest,
+        "IndependentTTest": IndependentTtest,
+        "MannWhitneyUTest": MannWhitneyUtest,
+        "OneWayANOVA": OneWayANOVA,
+        "PairedTTest": PairedTTest,
+        "WilcoxonSignedRankTest": WilcoxonSignedRankTest
+    }
+
+    # create the test object
+    try:
+        test_class = ACTION_MAP[request.action]
+        test = test_class(sessionId=request.sessionId, store=dataset_store, **request.params)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print("Params received:", request.params)
+        return {"error": str(e)}
+
+    # run the test
+    try:
+        result = test.run()
+        print("The test object ran successfully.")
+        print(f"Result: {result}")  # safe printing
+        print(f"Request: {request}")
+    except Exception as e:
+        print("Error running test:", e)
+        return {"error": str(e)}
+
+    # ✅ Return a dictionary, not a set
+    return {"data": result}
+
+
+@router.get("/status")
 def status():
-    return{"Status": "Backend is running"}
+    return {"Status": "Backend is running"}
