@@ -3,6 +3,8 @@ from app.api.routes import router
 from starlette.middleware.sessions import SessionMiddleware
 from app.api.session import sessionRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI(title="StatisLab")
 
@@ -27,6 +29,12 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(sessionRouter)
 
+# to enable the plots be shown on the front end:
+# Ensure the directory exists
+if not os.path.exists("plots"):
+    os.makedirs("plots")
+
+app.mount("/static_plots", StaticFiles(directory="plots"), name="static")
 
 @app.get("/")
 def root():

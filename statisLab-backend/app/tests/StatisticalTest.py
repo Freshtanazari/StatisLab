@@ -19,7 +19,10 @@ class StatisticalTest(ABC): # passing abc so python treats it as an abstract cla
     def run(self) -> dict: # returns a dictionary
         pass
 
-    @abstractmethod 
-    def effect_size(self) -> dict: 
+
+    @abstractmethod
+    def storeTest(self):
         pass
+
+
 

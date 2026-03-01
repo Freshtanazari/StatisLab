@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 
 const Preview = ({ data, setColumns }) => {
-  const [dataReady, setDataReady] = useState(false);
+
+  
   useEffect(() => {
     if (setColumns && columns) {
       setColumns(columns);
     }
-  }, [setColumns]);
-
+  }, [setColumns]); 
+  
   if (!data || data.length === 0) {
     return <p className="text-gray-500 italic">No data to preview</p>; // safe fallback
   }
-
   const { dataset, totalCols, totalRows, missingPercentage, dataTypes, sessionId } = data;
   const columns = Object.keys(dataset[0]);
+
+
+
+
 
   return (
     <div className=" ">

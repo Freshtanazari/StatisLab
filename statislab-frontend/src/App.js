@@ -11,6 +11,7 @@ function App() {
   const [data, setData] = useState(null);
   const [step, setStep] = useState(1);
   const [columns, setColumns] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
 
   const displayNextStep = () => {
     if (step < 5) setStep(step + 1);
@@ -27,10 +28,10 @@ function App() {
       </header>
 
       <main className="flex-1 py-3">
-        {step === 1 && <UploadStep setData={setData} />}
+        {step === 1 && <UploadStep setData={setData} setSessionId = {setSessionId} />}
         {step === 2 && <Preview data={data} setColumns={setColumns}/>}
         {step === 3 && <Processing data ={data} />}
-        {step === 4 && <Analysis  columns = {columns} />}
+        {step === 4 && <Analysis  columns = {columns} dataset = {data} sessionId = {sessionId}/>}
         {step === 5 && <Report />}
 
         {/* Navigation buttons */}
