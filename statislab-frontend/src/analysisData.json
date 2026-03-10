@@ -79,19 +79,19 @@
     "section": "Statistical Tests",
     "name": "Mann-Whitney U test",
     "action": "MannWhitneyUTest",
-    "params": ["column", "group_column"],
+    "params": ["valueCol", "groupCol"],
     "minColumns": 1,
     "maxColumns": 2,
     "columnTypes": "numeric (2 if using grouping column)",
     "requirements": ["columns", "group column", "non-parametric test"],
     "displayOptions": ["color", "marker"],
-    "parametersNames": ["column", "group_column"]
+    "parametersNames": ["value Column", "group column"]
   },
   {
     "section": "Statistical Tests",
     "name": "One-way ANOVA",
     "action": "OneWayANOVA",
-    "params": ["dependent_column", "group_column"],
+    "params": ["valueCol", "groupCol"],
     "minColumns": 2,
     "maxColumns": 5,
     "columnTypes": "numeric dependent + categorical independent(s)",
@@ -101,7 +101,7 @@
       "anova_type: one-way"
     ],
     "displayOptions": ["color", "marker"],
-    "parametersNames": ["dependent_column", "group_column"]
+    "parametersNames": ["value Column", "group column"]
   },
   {
     "section": "Statistical Tests",
@@ -113,7 +113,7 @@
     "columnTypes": "numeric (paired if 2 columns)",
     "requirements": ["paired numeric columns", "non-parametric test"],
     "displayOptions": ["color", "marker"],
-    "parametersNames": ["column1", "column2"]
+    "parametersNames": ["column 1", "column 2"]
   },
   {
     "section": "Statistical Tests",
@@ -125,7 +125,7 @@
     "columnTypes": "numeric",
     "requirements": ["paired numeric columns", "test_type: paired"],
     "displayOptions": ["color", "marker"],
-    "parametersNames": ["column1", "column2"]
+    "parametersNames": ["column 1", "column 2"]
   },
   {
     "section": "Statistical Tests",
