@@ -124,7 +124,7 @@ useEffect(() => {
             {
               label: "Drop Null Values",
               onClick: () => {
-                stageAction("dropAllNulls",{},  message = "All rows with null values will be dropped.");
+                stageAction("dropAllNulls",{},  "All rows with null values will be dropped.");
                 setNeedInput(false);
               },
             },
@@ -133,28 +133,28 @@ useEffect(() => {
               onClick: () => {
                 stageAction("interpolateMissing", {
                   method: "linear",
-                }, message = "Null values will be interpolated across entire dataset.");
+                }, "Null values will be interpolated across entire dataset.");
                 setNeedInput(false);
               },
             },
             {
               label: "Drop Duplicates",
               onClick: () => {
-                stageAction("dropDuplicates", {}, message = "All duplicate rows will be dropped.");
+                stageAction("dropDuplicates", {}, "All duplicate rows will be dropped.");
                 setNeedInput(false);
               },
             },
             {
               label: "Convert to Numeric",
               onClick: () => {
-                stageAction("allToNumeric", {},message = "All Columns will be converted to numeric type if possible.");
+                stageAction("allToNumeric", {},"All Columns will be converted to numeric type if possible.");
                 setNeedInput(false);
               },
             },
             {
               label: "Display Info",
               onClick: () => {
-                stageAction("displayInfo", {}, message = "Display Information of the dataset.");
+                stageAction("displayInfo", {}, "Display Information of the dataset.");
                 setNeedInput(false);
               },
             },
@@ -218,7 +218,7 @@ useEffect(() => {
                     <FaEye
                       className="text-black-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("displayUnique", { colName: col.name }, message = "Display all the unique values in the column.");
+                        stageAction("displayUnique", { colName: col.name }, "Display all the unique values in the column.");
                         setNeedInput(false);
                       }}
                     ></FaEye>
@@ -229,7 +229,7 @@ useEffect(() => {
                         stageAction(col.describe.toString(), {
 
                           colName: col.name,
-                        }, message = "display the description of the column")
+                        }, "display the description of the column")
                       }
                     >
                       {col.describe}
@@ -239,21 +239,21 @@ useEffect(() => {
                     <FaTrash
                       className="text-red-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("dropCol", { colName: col.name }, message = "The column will be deleted");
+                        stageAction("dropCol", { colName: col.name }, "The column will be deleted");
                         setNeedInput(false);
                       }}
                     />
                     <FaEdit
                       className="text-yellow-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("renameCol", { colName: col.name }, message="Enter the new name for the column: ");
+                        stageAction("renameCol", { colName: col.name }, "Enter the new name for the column: ");
                         setNeedInput(true);
                       }}
                     />
                     <FaExchangeAlt
                       className="text-blue-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("changeDtype", { colName: col.name }, message = "Choose the new column type: ");
+                        stageAction("changeDtype", { colName: col.name }, "Choose the new column type: ");
                         setNeedInput(true);
                       }}
                     />

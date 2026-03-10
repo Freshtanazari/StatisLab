@@ -13,6 +13,8 @@ jobs:
           fetch-depth: 0
 
       - name: Push to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.STATISLAB }}
         run: |
-          git remote add hf https://Freshta:${{secrets.HF_TOKEN}}@huggingface.co/spaces/Freshta/StatisLab
-          git push hf main --force
+          git remote add hf https://Freshta:${HF_TOKEN}@huggingface.co/spaces/Freshta/StatisLab
+          git push hf `git subtree split --prefix statisLab-backend main`:main --force
