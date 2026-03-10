@@ -23,7 +23,7 @@ class Dataset():
         self.df_current = self.df_orginal.copy()
     
     def getShape(self):
-        return self.def_current.shape
+        return self.df_current.shape
     
     def getPreview(self, n = 5):
         return self.df_current.head(n).to_dict(orient="records")

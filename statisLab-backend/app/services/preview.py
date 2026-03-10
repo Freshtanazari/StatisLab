@@ -55,7 +55,7 @@ def getDataTypes(df):
 
 # getting the overall missingness percentage in the whole dataframe
 def getMissingPercentage(df):
-    totalCells = df.size()
+    totalCells = df.size
     totalMissing = df.isna().sum().sum()
     percentage = totalMissing / totalCells
     return percentage
