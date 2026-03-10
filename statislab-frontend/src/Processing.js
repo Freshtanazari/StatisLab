@@ -65,9 +65,9 @@ useEffect(() => {
   function stageAction(
     action,
     params = {},
-    prompt = "are you sure you want to apply the action?",
+    message = "are you sure you want to apply the action?",
   ) {
-    setPendingAction({ action, params, prompt });
+    setPendingAction({ action, params, message });
     setOpen(true);
   }
   // handle exporting logs
@@ -104,7 +104,7 @@ useEffect(() => {
         action={pendingAction?.action}
         params={pendingAction?.params}
         needInput={needInput}
-        message={pendingAction?.prompt}
+        message={pendingAction?.message}
         onClose={() => {
           setOpen(false);
           setPendingAction(null);
@@ -124,7 +124,7 @@ useEffect(() => {
             {
               label: "Drop Null Values",
               onClick: () => {
-                stageAction("dropAllNulls",{},  prompt = "All rows with null values will be dropped.");
+                stageAction("dropAllNulls",{},  message = "All rows with null values will be dropped.");
                 setNeedInput(false);
               },
             },
@@ -133,28 +133,28 @@ useEffect(() => {
               onClick: () => {
                 stageAction("interpolateMissing", {
                   method: "linear",
-                }, prompt = "Null values will be interpolated across entire dataset.");
+                }, message = "Null values will be interpolated across entire dataset.");
                 setNeedInput(false);
               },
             },
             {
               label: "Drop Duplicates",
               onClick: () => {
-                stageAction("dropDuplicates", {}, prompt = "All duplicate rows will be dropped.");
+                stageAction("dropDuplicates", {}, message = "All duplicate rows will be dropped.");
                 setNeedInput(false);
               },
             },
             {
               label: "Convert to Numeric",
               onClick: () => {
-                stageAction("allToNumeric", {},prompt = "All Columns will be converted to numeric type if possible.");
+                stageAction("allToNumeric", {},message = "All Columns will be converted to numeric type if possible.");
                 setNeedInput(false);
               },
             },
             {
               label: "Display Info",
               onClick: () => {
-                stageAction("displayInfo", {}, prompt = "Display Information of the dataset.");
+                stageAction("displayInfo", {}, message = "Display Information of the dataset.");
                 setNeedInput(false);
               },
             },
@@ -218,7 +218,7 @@ useEffect(() => {
                     <FaEye
                       className="text-black-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("displayUnique", { colName: col.name }, prompt = "Display all the unique values in the column.");
+                        stageAction("displayUnique", { colName: col.name }, message = "Display all the unique values in the column.");
                         setNeedInput(false);
                       }}
                     ></FaEye>
@@ -229,7 +229,7 @@ useEffect(() => {
                         stageAction(col.describe.toString(), {
 
                           colName: col.name,
-                        }, prompt = "display the description of the column")
+                        }, message = "display the description of the column")
                       }
                     >
                       {col.describe}
@@ -239,21 +239,21 @@ useEffect(() => {
                     <FaTrash
                       className="text-red-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("dropCol", { colName: col.name }, prompt = "The column will be deleted");
+                        stageAction("dropCol", { colName: col.name }, message = "The column will be deleted");
                         setNeedInput(false);
                       }}
                     />
                     <FaEdit
                       className="text-yellow-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("renameCol", { colName: col.name }, prompt="Enter the new name for the column: ");
+                        stageAction("renameCol", { colName: col.name }, message="Enter the new name for the column: ");
                         setNeedInput(true);
                       }}
                     />
                     <FaExchangeAlt
                       className="text-blue-500 cursor-pointer"
                       onClick={() => {
-                        stageAction("changeDtype", { colName: col.name }, prompt = "Choose the new column type: ");
+                        stageAction("changeDtype", { colName: col.name }, message = "Choose the new column type: ");
                         setNeedInput(true);
                       }}
                     />
