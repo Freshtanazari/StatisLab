@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 const Preview = ({ data, setColumns }) => {
   const dataset = data?.dataset || [];
-  const columns = dataset[0] ? Object.keys(dataset[0]) : [];
+  const columns = useMemo(() => (dataset[0] ? Object.keys(dataset[0]) : []), [dataset]);
   const totalCols = data?.totalCols;
   const totalRows = data?.totalRows;
   const missingPercentage = data?.missingPercentage;
