@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo } from "react";
 
 const Preview = ({ data, setColumns }) => {
-  const dataset = data?.dataset || [];
-  const columns = useMemo(() => (dataset[0] ? Object.keys(dataset[0]) : []), [dataset]);
+  const dataset = data?.dataset ?? [];
+  const columns = useMemo(
+    () => Object.keys(data?.dataset?.[0] ?? {}),
+    [data?.dataset],
+  );
   const totalCols = data?.totalCols;
   const totalRows = data?.totalRows;
   const missingPercentage = data?.missingPercentage;
