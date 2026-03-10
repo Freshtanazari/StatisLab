@@ -31,7 +31,7 @@ class Visualizer:
         return {
             "plot_name" : plot_name, 
             "plot_columns" : columns, 
-            "saved_path" : save_path
+            "saved_path" : file_name
         }
 
 # univariate plots:(single variable)
