@@ -1,20 +1,22 @@
 import React, { useEffect } from "react";
 
 const Preview = ({ data, setColumns }) => {
+  const dataset = data?.dataset || [];
+  const columns = dataset[0] ? Object.keys(dataset[0]) : [];
+  const totalCols = data?.totalCols;
+  const totalRows = data?.totalRows;
+  const missingPercentage = data?.missingPercentage;
+  const dataTypes = data?.dataTypes || {};
 
-  if (!data || data.length === 0) {
-    return <p className="text-gray-500 italic">No data to preview</p>; // safe fallback
-  }
-
-  const { dataset, totalCols, totalRows, missingPercentage, dataTypes } = data;
-  const columns = Object.keys(dataset[0]);
-
-  
   useEffect(() => {
-    if (setColumns && columns) {
+    if (setColumns && columns.length > 0) {
       setColumns(columns);
     }
   }, [setColumns, columns]); 
+
+  if (!data || dataset.length === 0) {
+    return <p className="text-gray-500 italic">No data to preview</p>; // safe fallback
+  }
 
 
 
