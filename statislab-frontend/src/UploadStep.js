@@ -5,7 +5,6 @@ export default function UploadStep({ setData, setSessionId }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
-  const [valid, setValid] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFileSelect = (selectedFile) => {
@@ -39,7 +38,6 @@ export default function UploadStep({ setData, setSessionId }) {
       const response = await axios.post("http://127.0.0.1:8000/upload", formData);
       setData(response.data);
       setSessionId(response.data.sessionId)
-      setValid(true);
     } catch (error) {
       let message = "Error uploading file";
       if (error.response) {

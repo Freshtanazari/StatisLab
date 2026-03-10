@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import analysisData from "../analysisData.json";
+import React, { useState } from "react";
 import axios from "axios";
 
 // --- 1. SUB-COMPONENT: A single Analysis Card ---

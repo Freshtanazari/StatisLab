@@ -55,7 +55,7 @@ useEffect(() => {
     }
   }
     fetchData();
-  }, [data?.sessionId, refreshTrigger]);
+  }, [data?.sessionId, refreshTrigger, logData]);
 
   
 

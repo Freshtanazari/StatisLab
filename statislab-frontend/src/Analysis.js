@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import analysisData from "./analysisData.json";
-import axios from "axios";
 import AnalysisCard from "./components/AnalysisCard";
-import { data } from "autoprefixer";
 
 const Analysis = ({ columns, sessionId }) => {
   // to store analysisBoxes in one place
@@ -24,7 +22,7 @@ const Analysis = ({ columns, sessionId }) => {
   // list instances of each section
   function groupInstance(section){
     return allAnalysis.filter(function(instance){
-      return instance.section == section;
+      return instance.section === section;
     })
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 const Preview = ({ data, setColumns }) => {
 
@@ -7,7 +7,7 @@ const Preview = ({ data, setColumns }) => {
     if (setColumns && columns) {
       setColumns(columns);
     }
-  }, [setColumns]); 
+  }, [setColumns, columns]); 
   
   if (!data || data.length === 0) {
     return <p className="text-gray-500 italic">No data to preview</p>; // safe fallback
