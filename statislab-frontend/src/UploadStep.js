@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "./config/api";
 
 export default function UploadStep({ setData, setSessionId }) {
   const [file, setFile] = useState(null);
@@ -35,7 +36,7 @@ export default function UploadStep({ setData, setSessionId }) {
     formData.append("file", file);
     try {
       setLoading(true);
-      const response = await axios.post("http://127.0.0.1:8000/upload", formData);
+      const response = await axios.post(apiUrl("/upload"), formData);
       setData(response.data);
       setSessionId(response.data.sessionId)
     } catch (error) {

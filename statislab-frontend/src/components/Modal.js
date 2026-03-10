@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiUrl } from "../config/api";
 
 const Modal = ({
   isOpen,
@@ -46,7 +47,7 @@ const Modal = ({
     try {
       setLoading(true);
 
-      const res = await fetch("http://127.0.0.1:8000/preprocess/action", {
+      const res = await fetch(apiUrl("/preprocess/action"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

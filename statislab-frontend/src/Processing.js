@@ -3,6 +3,7 @@ import { FaTrash, FaEdit, FaExchangeAlt } from "react-icons/fa"; // FontAwesome 
 import { FaEye } from "react-icons/fa"; // FontAwesome eye icon
 import Modal from "./components/Modal";
 import axios from "axios";
+import { apiUrl } from "./config/api";
 
 const Processing = ({ data }) => {
   // modal open or not
@@ -32,7 +33,7 @@ useEffect(() => {
 
   const fetchData = async () => {
     try{
-    const response = await axios.post("http://localhost:8000/preprocess", {
+    const response = await axios.post(apiUrl("/preprocess"), {
       sessionId: sessionId, 
       action: "tableData", 
       params: null,
@@ -42,7 +43,7 @@ useEffect(() => {
     console.log("Updated table data:", response.data);
 
     // getting the report data for logging
-    const audit = await axios.post("http://127.0.0.1:8000/preprocess/action", {
+    const audit = await axios.post(apiUrl("/preprocess/action"), {
       sessionId: sessionId, 
       action:"display_audit_log", 
       params: null,
@@ -77,7 +78,7 @@ useEffect(() => {
     }
     try {
       const sessionId = data?.sessionId;
-      const response = await axios.post("http://localhost:8000/download_audit",{
+      const response = await axios.post(apiUrl("/download_audit"),{
         sessionId: sessionId }
         ,{
         responseType: "blob", // for file download

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../config/api";
 
 // --- 1. SUB-COMPONENT: A single Analysis Card ---
 const AnalysisCard = ({
@@ -48,7 +49,7 @@ const AnalysisCard = ({
       console.log("sending to the backend: ", payload);
 
       const response = await axios.post(
-        `http://localhost:8000/${apiEndPoint}`,
+        apiUrl(`/${apiEndPoint}`),
         payload,
       );
       console.log(response.data);
@@ -117,7 +118,7 @@ const AnalysisCard = ({
               instance.result.saved_path.includes(".png") ? (
                 <div className="flex justify-center">
                 <img
-                  src={`http://localhost:8000/static_plots/${instance.result.saved_path.split("\\").pop()}`}
+                  src={apiUrl(`/static_plots/${instance.result.saved_path.split("\\").pop()}`)}
                   alt="Analysis Plot"
                   className="w-full sm:w-64 md:w-80 h-auto rounded"
                 />
