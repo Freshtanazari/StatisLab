@@ -1,4 +1,4 @@
-class report:
+class Report:
   
     def __init__(self):
         self.analyses = list()

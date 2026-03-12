@@ -19,6 +19,8 @@ from ..tests.MannWhitneyUtest import MannWhitneyUtest
 from ..tests.OneWayANOVA import OneWayANOVA
 from ..tests.PairedTTest import PairedTTest
 from ..tests.WilcoxonSignedRankTest import WilcoxonSignedRankTest
+from ..services.analysis import Analysis
+from ..utils.json_serialization import convert_numpy
 
 import uuid
 from fastapi import Request
@@ -62,11 +64,11 @@ async def upload_csv( file: UploadFile = File(...)):
     dataTypes = getDataTypes(dataset_obj.df_current)
 
     return {
-        "dataset": subDataset, 
+        "dataset": convert_numpy(subDataset), 
         "totalCols": int(totals[0]), 
         "totalRows": int(totals[1]), 
-        "missingPercentage": missingPercentage, 
-        "dataTypes": dataTypes,
+        "missingPercentage": convert_numpy(missingPercentage), 
+        "dataTypes": convert_numpy(dataTypes),
         "sessionId": session_id
     }
 
@@ -103,9 +105,9 @@ async def run_action(request: PreprocessRequest):
         return{"error": str(e)}
     
     return {
-        "message" : result,
+        "message" : convert_numpy(result),
     }
-
+# preprocess 
 @router.post("/preprocess")
 
 async def getTableData(request: PreprocessRequest):
@@ -120,7 +122,7 @@ async def getTableData(request: PreprocessRequest):
     except Exception as e:
         return {"error": str(e)}
     
-    return result
+    return convert_numpy(result)
 
 class downloadRequest(BaseModel):
     sessionId : str
@@ -147,6 +149,46 @@ async def download_audit(request: downloadRequest):
         headers={"Content-Disposition": f"attachment; filename=audit_.xlsx"}
     )
 
+
+# descriptive analysis
+class AnalysisRequest(BaseModel):
+    sessionId : str
+    action : str
+    params: Optional[Dict] = None  # method parameters, if any although will be there
+
+@router.post("/descriptive")
+
+async def run_action(request: AnalysisRequest):
+
+    # create preprecessor instacne 
+    try:
+        prep = Analysis(sessionId = request.sessionId, store = dataset_store)
+    except Exception as e:
+        return {"error": str(e)}
+    
+    # validate the method 
+    if not hasattr(prep, request.action):
+        return {"error": f"action {request.action} not found"}
+    
+    method = getattr(prep, request.action)
+
+    try: 
+        # call the method
+        print("we have called the method with params" + str(request.params))
+        result = method(**(request.params or {}))
+        print("resutlt is " + str(result))
+        print(request)
+    except Exception as e:
+        print(e)
+        print(e)
+        return{"error": str(e)}
+    
+    return {
+         "data": convert_numpy(result)
+    }
+
+
+# visualizer
 class AnalysisRequest(BaseModel):
     sessionId : str
     action : str
@@ -180,7 +222,7 @@ async def run_action(request: AnalysisRequest):
         return{"error": str(e)}
     
     return {
-       "data": result
+         "data": convert_numpy(result)
     }
 
 class AnalysisRequest(BaseModel):
@@ -219,8 +261,8 @@ async def run_action(request: AnalysisRequest):
         print("Error running test:", e)
         return {"error": str(e)}
 
-    # ✅ Return a dictionary, not a set
-    return {"data": result}
+    # Return a dictionary, not a set
+    return {"data": convert_numpy(result)}
 
 
 @router.get("/status")

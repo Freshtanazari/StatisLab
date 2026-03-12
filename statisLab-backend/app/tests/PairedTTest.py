@@ -2,7 +2,6 @@ from .StatisticalTest import StatisticalTest
 from scipy.stats import ttest_rel
 import numpy as np
 from scipy.stats import shapiro
-from ..models.Dataset import Dataset
 from ..storage.DatasetStore import DatasetStore
 import pandas as pd
 
@@ -10,24 +9,34 @@ import pandas as pd
 class PairedTTest(StatisticalTest):
     # note : valueCol1(before) --> numeric col 
     # valueCol2(after) --> numeric col
-    def __init__(self, col1,sessionId, store: DatasetStore, col2, alpha = 0.5):
-        dataset = store.getDataset(sessionID=sessionId)
+    def __init__(self, col1,sessionId, store: DatasetStore, col2, alpha = 0.05):
+        self.dataset = store.getDataset(sessionID=sessionId)
         self.sessionId = sessionId
-        self.df = dataset.df_current # get the current dataset
+        self.df = self.dataset.df_current # get the current dataset
         self.valueCol1 = col1
         self.valueCol2 = col2 
         # get numeric cols as arrays
-        self.data1 = pd.to_numeric(self.df[self.valueCol1], errors="coerce").dropna()
-        self.data2 = pd.to_numeric(self.df[self.valueCol2], errors="coerce").dropna()
+        paired = self.df[[self.valueCol1,self.valueCol2]].copy()
+        paired[self.valueCol1] = pd.to_numeric(paired[self.valueCol1], errors="coerce")
+        paired[self.valueCol2] = pd.to_numeric(paired[self.valueCol2], errors="coerce")
+        paired = paired.dropna()
+        if len(paired) <  2: 
+            raise ValueError("Paired t-test requires at least 2 valid paired rows.")
         self.alpha = alpha
+        # Keep aligned vectors
+        self.data1 = paired[self.valueCol1].reset_index(drop=True)
+        self.data2 = paired[self.valueCol2].reset_index(drop=True)
 
     def checkAssumptions(self) -> dict:
         assumptions ={}
-        diff = self.df[self.valueCol1] - self.df[self.valueCol2]
+        diff = self.data1 - self.data2
 
-        #1. normality - shapiro-wilk
-        assumptions["normality_of_differences"] = bool(shapiro(diff).pvalue > self.alpha)
-
+        # shapiro needs enough data points
+        if len(diff) < 3:
+            assumptions["normality_of_differences"] = None
+            assumptions["normality_note"] = "Not enough data points to test normality (need at least 3 pairs)."
+        else:
+            assumptions["normality_of_differences"]  = bool(shapiro(diff).pvalue > self.alpha)
         return assumptions 
       
     def run(self):
@@ -43,7 +52,7 @@ class PairedTTest(StatisticalTest):
 
         assumptions = self.checkAssumptions()
         effectS = self.effectSize()
-        return {
+        result =  {
             "test name": "paired t-test",
             "t statistic": float(tStat), 
             "P value": float(pValue), 
@@ -51,6 +60,8 @@ class PairedTTest(StatisticalTest):
             "assumptions": assumptions, 
             "effect size": effectS, 
         }
+        self.storeTest(result)
+        return result
     
     def effectSize(self):
         # Cohen's d for paired samples: mean differnce / std difference 
@@ -69,5 +80,6 @@ class PairedTTest(StatisticalTest):
         
     def alternativeHypothesis(self):
          return f"The mean of {self.valueCol1} is different from the mean of {self.valueCol2}."
-    def storeTest(result, sessionId, store):
+    def storeTest(self, result):
+        self.dataset.report.addAnalysis(result)
         pass 

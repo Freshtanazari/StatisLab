@@ -1,7 +1,6 @@
 from scipy.stats import f_oneway
 from scipy.stats import shapiro, levene
 from .StatisticalTest import StatisticalTest
-from ..models.Dataset import Dataset
 from ..storage.DatasetStore import DatasetStore
 import pandas as pd
 
@@ -9,10 +8,10 @@ import pandas as pd
 class OneWayANOVA(StatisticalTest):
     # compares means of numeric variables across 3 or more independent groups
 
-    def __init__(self , valueCol ,sessionId, store: DatasetStore, groupCol, alpha = 0.5):
-        dataset = store.getDataset(sessionID=sessionId)
+    def __init__(self , valueCol ,sessionId, store: DatasetStore, groupCol, alpha = 0.05):
+        self.dataset = store.getDataset(sessionID=sessionId)
         self.sessionId = sessionId
-        self.df = dataset.df_current
+        self.df = self.dataset.df_current
         self.alpha = alpha
         self.valueCol = valueCol
         self.groupCol = groupCol
@@ -67,7 +66,7 @@ class OneWayANOVA(StatisticalTest):
         fStat, pValue = f_oneway(*grouped_result)
         assumptions = self.checkAssumptions()
         effect = self.effectSize(fStat)
-        return {
+        result =  {
             "test": "one-way-ANOVA test",
             "f_statistic": float(fStat),
             "p_value": float(pValue),
@@ -75,6 +74,9 @@ class OneWayANOVA(StatisticalTest):
             "assumptions": assumptions, 
             "effect_size" : effect
         }
+        self.storeTest(result)
+        return result 
+
 
     def effectSize(self, fStat: float) -> dict:
         k = len(self.groups)
@@ -93,5 +95,6 @@ class OneWayANOVA(StatisticalTest):
     def alternativeHypothesis(self):
         return "At least one group mean is different."
 
-    def storeTest(result, sessionId, store):
-        pass
+    def storeTest(self, result):
+        self.dataset.report.addAnalysis(result)
+        pass 

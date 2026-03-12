@@ -12,8 +12,8 @@ class IndependentTtest(StatisticalTest):
     """
 
     def __init__(self, valueCol: str, groupCol: str, sessionId: str, store: DatasetStore, alpha: float = 0.05, welch: bool = False):
-        dataset = store.getDataset(sessionID=sessionId)
-        self.df = dataset.df_current
+        self.dataset = store.getDataset(sessionID=sessionId)
+        self.df = self.dataset.df_current
         self.valueCol = valueCol
         self.groupCol = groupCol
         self.alpha = alpha
@@ -75,7 +75,9 @@ class IndependentTtest(StatisticalTest):
             },
             "assumptions": assumptions
         }
+        self.storeTest(result)
         return result
     
-    def storeTest(result, sessionId, store):
+    def storeTest(self, result):
+        self.dataset.report.addAnalysis(result)
         pass 

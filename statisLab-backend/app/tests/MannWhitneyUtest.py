@@ -10,11 +10,9 @@ class MannWhitneyUtest(StatisticalTest):
 
     def __init__(self, valueCol, sessionId, store: DatasetStore, groupCol, alpha=0.05):
 
-        dataset = store.getDataset(sessionID=sessionId)
-
+        self.dataset = store.getDataset(sessionID=sessionId)
         self.sessionId = sessionId
-        self.df = dataset.df_current.copy()
-
+        self.df = self.dataset.df_current.copy()
         self.col1 = valueCol
         self.groupCol = groupCol
         self.alpha = alpha
@@ -69,7 +67,7 @@ class MannWhitneyUtest(StatisticalTest):
 
         assumptions = self.checkAssumptions()
 
-        return {
+        result = {
             "test": "Mann-Whitney U Test",
             "statistic": float(stat),
             "p_value": float(pValue),
@@ -81,6 +79,9 @@ class MannWhitneyUtest(StatisticalTest):
             "null_hypothesis": self.nullHypothesis(), 
             "alternative_hypothesis": self.alternativeHypothesis()
         }
+        self.storeTest(result)
+        return result
+    
 
     def effectSize(self, stat, N1, N2) -> dict:
 
@@ -99,6 +100,6 @@ class MannWhitneyUtest(StatisticalTest):
 
     def alternativeHypothesis(self):
         return f"The distributions of {self.col1} in the two groups of {self.groupCol} are not equal."
+    def storeTest(self, result):
+        self.dataset.report.addAnalysis(result)
 
-    def storeTest(self, result, sessionId, store):
-        pass

@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 from app.models.Dataset import Dataset 
+from app.models.Report import Report
+from app.storage.DatasetStore import DatasetStore
+
 
 
 class Visualizer:
@@ -10,6 +13,7 @@ class Visualizer:
     def __init__(self,sessionId,store, save_dir = "plots", palette="husl", theme="whitegrid"):
         self.df = store.getDataset(sessionId).df_current
         self.save_dir = save_dir
+        self.dataset = store.getDataset(sessionId) 
         self.palette = palette
         self.theme = theme
         os.makedirs(self.save_dir, exist_ok=True)
@@ -28,11 +32,13 @@ class Visualizer:
         save_path = os.path.join(self.save_dir, file_name)
         fig.savefig(save_path, bbox_inches="tight")
         plt.close(fig)
-        return {
+        result =  {
             "plot_name" : plot_name, 
             "plot_columns" : columns, 
             "saved_path" : file_name
         }
+        self.dataset.report.addAnalysis(result)
+        return result
 
 # univariate plots:(single variable)
     def boxplot(self, col):
@@ -166,6 +172,13 @@ class Visualizer:
         pass
     def jointPlot(self):
         pass
+
+        # get heapmap of missingness
+    def get_missingness_heatmap(self):
+        fig, ax = plt.subplots(figsize = (10, 6))
+        sns.heatmap(self.df.isnull(), cbar=False)
+        plt.title("Missingness Heatmap")
+        return self.save_plots(fig, plot_name="missingness_heatmap")
 
 
 def main():

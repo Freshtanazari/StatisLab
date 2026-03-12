@@ -1,7 +1,9 @@
 [
   {
     "section": "Descriptive Analysis",
-    "name": "Inspect dataset structure (rows, columns, types)",
+    "name": "Inspect Dataset Structure",
+    "action": "inspect_dataset",
+    "params": [],
     "minColumns": 0,
     "maxColumns": 0,
     "columnTypes": "any",
@@ -11,56 +13,63 @@
   },
   {
     "section": "Descriptive Analysis",
-    "name": "Summary statistics (mean, median, mode, std, min, max)",
-    "minColumns": 1,
-    "maxColumns": 10,
-    "columnTypes": "numeric (mode can also use categorical)",
-    "requirements": [
-      "columns",
-      "aggregate_method: mean/median/mode/std/min/max"
-    ],
+    "name": "Summary Statistics",
+    "action": "get_summary_statistics",
+    "params": [],
+    "minColumns": 0,
+    "maxColumns": 0,
+    "columnTypes": "numeric",
+    "requirements": [],
     "displayOptions": [],
-    "parametersNames": ["columns", "aggregate_method"]
+    "parametersNames": []
   },
   {
     "section": "Descriptive Analysis",
-    "name": "Check missing values",
+    "name": "Dataset Info",
+    "action": "return_info",
+    "params": [],
     "minColumns": 0,
     "maxColumns": 0,
     "columnTypes": "any",
-    "requirements": ["columns optional"],
+    "requirements": [],
     "displayOptions": [],
-    "parametersNames": ["columns"]
-  },
+    "parametersNames": []
+}, 
   {
     "section": "Descriptive Analysis",
-    "name": "Identify outliers",
-    "minColumns": 1,
-    "maxColumns": 5,
+    "name": "Identify Outliers",
+    "action": "get_outliers_details",
+    "params": [],
+    "minColumns": 0,
+    "maxColumns": 0,
     "columnTypes": "numeric",
-    "requirements": ["columns", "method: IQR/Z-score", "optional hue/grouping"],
-    "displayOptions": ["color", "marker"],
-    "parametersNames": ["columns", "method", "hue"]
+    "requirements": [],
+    "displayOptions": [],
+    "parametersNames": []
   },
   {
     "section": "Descriptive Analysis",
-    "name": "Explore categorical distributions (counts, frequency)",
+    "name": "Numerical Distribution",
+    "action": "numerical_distribution",
+    "params": ["col"],
+    "minColumns": 1,
+    "maxColumns": 1,
+    "columnTypes": "numeric",
+    "requirements": ["col"],
+    "displayOptions": [],
+    "parametersNames": ["column"]
+  },
+  {
+    "section": "Descriptive Analysis",
+    "name": "Categorical Distribution",
+    "action": "categorical_distribution",
+    "params": ["col"],
     "minColumns": 1,
     "maxColumns": 1,
     "columnTypes": "categorical",
-    "requirements": ["column", "optional hue/grouping"],
-    "displayOptions": ["color", "bar_style"],
-    "parametersNames": ["column", "hue"]
-  },
-  {
-    "section": "Descriptive Analysis",
-    "name": "Explore numerical distributions (histogram, skewness, kurtosis)",
-    "minColumns": 1,
-    "maxColumns": 5,
-    "columnTypes": "numeric",
-    "requirements": ["columns", "bins", "optional hue/grouping"],
-    "displayOptions": ["color_palette", "edgecolor", "hist_type", "alpha"],
-    "parametersNames": ["columns", "bins", "hue"]
+    "requirements": ["col"],
+    "displayOptions": [],
+    "parametersNames": ["column"]
   },
   {
     "section": "Statistical Tests",
@@ -258,5 +267,17 @@
     "requirements": [],
     "displayOptions": ["palette", "theme"],
     "parametersNames": []
-  }
+  }, 
+  {
+  "section": "Data Visualization",
+  "name": "Missingness Heatmap",
+  "action": "get_missingness_heatmap",
+  "params": [],
+  "minColumns": 0,
+  "maxColumns": 0,
+  "columnTypes": "any",
+  "requirements": [],
+  "displayOptions": ["palette", "theme"],
+  "parametersNames": []
+}
 ]

@@ -3,6 +3,7 @@ from scipy.stats import wilcoxon
 from ..models.Dataset import Dataset
 from ..storage.DatasetStore import DatasetStore
 import numpy as np 
+import pandas as pd
 
 
 class WilcoxonSignedRankTest(StatisticalTest):
@@ -10,34 +11,54 @@ class WilcoxonSignedRankTest(StatisticalTest):
     # note: fix for empty or nan values passed down to the function 
 
     def __init__(self, col1, col2,sessionId, store: DatasetStore, alpha= 0.05):
-        dataset = store.getDataset(sessionID=sessionId)
+        self.dataset = store.getDataset(sessionID=sessionId)
         self.sessionId = sessionId
-        self.df = dataset.df_current # get the current dataset
+        self.df = self.dataset.df_current # get the current dataset
         self.col1 = col1
         self.col2 = col2
-        self.alpha = alpha 
+        self.alpha = alpha
+
+        if self.col1 not in self.df.columns:
+            raise KeyError(f"{self.col1} not found in dataset")
+
+        if self.col2 not in self.df.columns:
+            raise KeyError(f"{self.col2} not found in dataset")
+
+        # Keep rows paired by cleaning both columns together.
+        paired = self.df[[self.col1, self.col2]].copy()
+        paired[self.col1] = pd.to_numeric(paired[self.col1], errors="coerce")
+        paired[self.col2] = pd.to_numeric(paired[self.col2], errors="coerce")
+        paired = paired.dropna()
+
+        if len(paired) < 1:
+            raise ValueError("Wilcoxon test requires at least 1 valid paired row.")
+
+        self.data1 = paired[self.col1].reset_index(drop=True)
+        self.data2 = paired[self.col2].reset_index(drop=True)
 
     def checkAssumptions(self):
         assumptions = {}
 
-        # 1. paird data
-        assumptions["paired_data"] = bool(len(self.df[self.col1]) == len(self.df[self.col2]))
+        # 1. paired cleaned vectors
+        assumptions["paired_data"] = bool(len(self.data1) == len(self.data2))
 
         #2. differences are continuous
-        assumptions["differences_continueous"] = bool(self.df[self.col1].dtype.kind in 'biufc' and self.df[self.col2].dtype.kind in 'biufc')
+        assumptions["differences_continueous"] = bool(
+            self.data1.dtype.kind in "biufc" and self.data2.dtype.kind in "biufc"
+        )
 
         return assumptions
     
     def run(self) -> dict:
 
-        stat, pValue = wilcoxon(self.df[self.col1], self.df[self.col2])
+        stat, pValue = wilcoxon(self.data1, self.data2)
         assumptions = self.checkAssumptions()
         effectS = self.effectSize(stat)
 
         # safe floats: 
         stat = 0.0 if not np.isfinite(stat) else float(stat)
         pValue = 1.0 if not np.isfinite(pValue) else float(pValue)
-        return{
+        result = {
             "test Name" : "Wilicoxon Signed_Rank Test",
             "statistic" : float(stat),
             "p value": float(pValue),
@@ -47,12 +68,14 @@ class WilcoxonSignedRankTest(StatisticalTest):
             "null hypothesis": self.nullHypothesis(), 
             "alternative hypothesis": self.alternativeHypothesis()
         }
+        self.storeTest(result)
+        return result
     
     def effectSize(self, stat) -> dict:
         # r = Z / sqrt(N), approximate effect size (requires normal approximation)
         # For simplicity, use: r = stat / sqrt(N*(N+1)/2)
         # N = number of non-zero differences
-        non_zero_diffs = (self.df[self.col1] - self.df[self.col2]).astype(float)
+        non_zero_diffs = (self.data1 - self.data2).astype(float)
         non_zero_diffs = non_zero_diffs[non_zero_diffs != 0]
 
         N = len(non_zero_diffs)
@@ -73,5 +96,6 @@ class WilcoxonSignedRankTest(StatisticalTest):
        return f"The median difference between {self.col1} and {self.col2} is zero (no change)."
     def alternativeHypothesis(self):
         return f"The median difference between {self.col1} and {self.col2} is not zero (change exists)."
-    def storeTest(result, sessionId, store):
-        pass 
+    def storeTest(self, result):
+        self.dataset.report.addAnalysis(result)
+        pass  

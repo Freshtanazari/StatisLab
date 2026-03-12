@@ -3,6 +3,7 @@ from scipy.stats import chi2_contingency
 from .StatisticalTest import StatisticalTest
 from ..models.Dataset import Dataset
 from ..storage.DatasetStore import DatasetStore
+from ..models.Report import Report
 
 class ChiSquareTest(StatisticalTest):
     """
@@ -10,9 +11,9 @@ class ChiSquareTest(StatisticalTest):
     """
 
     def __init__(self, col1, col2, sessionId, store: DatasetStore, alpha=0.05):
-        dataset = store.getDataset(sessionID=sessionId)
+        self.dataset = store.getDataset(sessionID=sessionId)
         self.sessionId = sessionId
-        self.df = dataset.df_current # get the current dataset
+        self.df = self.dataset.df_current # get the current dataset
         self.alpha = alpha 
         self.col1 = col1
         self.col2 = col2
@@ -72,6 +73,7 @@ class ChiSquareTest(StatisticalTest):
                 )
             }
         }
+        self.storeTest(result)
 
         return result
     
@@ -81,7 +83,8 @@ class ChiSquareTest(StatisticalTest):
     def alternativeHypothesis(self):
         return f"The variables {self.col1} and {self.col2} are dependent."
     
-    def storeTest(result, sessionId, store):
+    def storeTest(self, result):
+        self.dataset.report.addAnalysis(result)
         pass 
     
     def effectSize(self, chi2, N, shape) -> dict:
