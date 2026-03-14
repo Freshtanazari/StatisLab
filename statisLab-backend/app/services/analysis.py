@@ -26,10 +26,8 @@ class Analysis:
 
     # get the shema of the dataset
     def get_table_schema(self): 
-        self.dataset.report.returnAllAnalysis()
 
         schema = []
-        
         for col in self.df.columns:
             row = {}
             row["coluumn_name"] = col
@@ -149,6 +147,11 @@ class Analysis:
         result = buf.getvalue()
         self.dataset.report.addAnalysis(result)
         return result
+    
+    def return_analysis_report(self):
+        result = self.dataset.report.returnAllAnalysis();
+        return result
+
     
     
     
