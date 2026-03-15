@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const FEATURE_CARDS = [
   { num: "01", title: "Fast CSV intake", description: "Upload a dataset, keep the session alive, and move straight into inspection without redoing work." },
@@ -7,12 +7,28 @@ const FEATURE_CARDS = [
 ];
 
 function LandingPage({ steps = [], onEnterWorkspace }) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 900);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
     <main style={{ fontFamily: "Inter, sans-serif", background: "linear-gradient(160deg, #f6fbfa 0%, #f8fafc 55%, #eef6f3 100%)", color: "#1f2937", minHeight: "100vh" }}>
 
 
       {/* Hero */}
-      <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2.5rem", padding: "5rem 3rem", alignItems: "center" }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? "1.25rem" : "2.5rem",
+          padding: isMobile ? "2rem 1rem" : "5rem 3rem",
+          alignItems: "center",
+        }}
+      >
         <div>
           <span style={{ display: "inline-block", fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#0f766e", background: "#dff5ee", padding: "4px 12px", borderRadius: 100, marginBottom: "1.25rem" }}>
             Statistical analysis
@@ -22,7 +38,7 @@ function LandingPage({ steps = [], onEnterWorkspace }) {
             <span style={{ color: "#0f766e" }}>cleaned outputs,</span>{" "}
             tests, and reports.
           </h1>
-          <p style={{ fontSize: 15, lineHeight: 1.75, color: "#475569", margin: "0 0 2rem", maxWidth: "46ch" }}>
+          <p style={{ fontSize: isMobile ? 14 : 15, lineHeight: 1.75, color: "#475569", margin: "0 0 2rem", maxWidth: "46ch" }}>
             A structured flow for upload, validation, preprocessing, statistical analysis, and reporting — from one workspace, without setup friction.
           </p>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
@@ -40,12 +56,16 @@ function LandingPage({ steps = [], onEnterWorkspace }) {
         </div>
 
         {/* Hero card */}
-        <div style={{ background: "linear-gradient(145deg, #ffffff, #f4fbf8)", border: "1px solid rgba(15,118,110,0.16)", borderRadius: 16, padding: "2rem" }}>
+        <div style={{ background: "linear-gradient(145deg, #ffffff, #f4fbf8)", border: "1px solid rgba(15,118,110,0.16)", borderRadius: 16, padding: isMobile ? "1.25rem" : "2rem" }}>
           <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#0f766e", margin: "0 0 1.25rem" }}>
-            What this unlocks
+            Who can use this project
           </p>
           <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {["A true front door for the product", "Room for marketing copy, screenshots, and onboarding", "Separation between promotion and the working app"].map((item) => (
+            {[
+              "Students learning statistics and data analysis",
+              "Researchers preparing quick, reproducible statistical reports",
+              "Beginner analysts who want a guided no-code workflow",
+            ].map((item) => (
               <li key={item} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 14, color: "#1f2937", lineHeight: 1.55 }}>
                 <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#0f766e", marginTop: 5, flexShrink: 0, opacity: 0.7 }} />
                 {item}
@@ -56,7 +76,14 @@ function LandingPage({ steps = [], onEnterWorkspace }) {
       </section>
 
       {/* Features */}
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.25rem", padding: "0 3rem 4rem" }}>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+          gap: "1.25rem",
+          padding: isMobile ? "0 1rem 2rem" : "0 3rem 4rem",
+        }}
+      >
         {FEATURE_CARDS.map((card) => (
           <article key={card.title} style={{ background: "#fff", border: "1px solid rgba(15,118,110,0.12)", borderRadius: 12, padding: "1.75rem" }}>
             <p style={{ fontSize: 11, fontWeight: 600, color: "#0f766e", letterSpacing: "0.08em", margin: "0 0 1rem" }}>{card.num}</p>
@@ -67,7 +94,7 @@ function LandingPage({ steps = [], onEnterWorkspace }) {
       </section>
 
       {/* Workflow */}
-      <section id="landing-flow" style={{ padding: "4rem 3rem", background: "#fff", borderTop: "1px solid rgba(15,118,110,0.12)" }}>
+      <section id="landing-flow" style={{ padding: isMobile ? "2rem 1rem" : "4rem 3rem", background: "#fff", borderTop: "1px solid rgba(15,118,110,0.12)" }}>
         <div style={{ marginBottom: "2.5rem" }}>
           <span style={{ display: "inline-block", fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#0f766e", background: "#dff5ee", padding: "4px 12px", borderRadius: 100, marginBottom: "0.75rem" }}>
             Workflow preview
@@ -76,7 +103,7 @@ function LandingPage({ steps = [], onEnterWorkspace }) {
             The existing lab flow stays intact behind the landing page.
           </h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(175px, 1fr))", gap: "1.5rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(175px, 1fr))", gap: "1.5rem" }}>
           {steps.map((step) => (
             <div key={step.number} style={{ padding: "1.25rem", background: "linear-gradient(145deg, #f6fbfa, #fff)", border: "1px solid rgba(15,118,110,0.12)", borderRadius: 10 }}>
               <p style={{ fontSize: 11, fontWeight: 600, color: "#0f766e", letterSpacing: "0.08em", margin: "0 0 0.6rem" }}>0{step.number}</p>
