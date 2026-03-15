@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-import uuid
+from .shared.security import get_or_create_session_id
 
 # create the router 
 sessionRouter = APIRouter(prefix="/session", tags=["session"])
@@ -12,11 +12,8 @@ def createSession(request: Request):
     :param request: Description
     :type request: Request
     """
-
-    if "sessionId" not in request.session:
-        request.session["sessionId"] = str(uuid.uuid4())
-        request.session["datasets"] = []
+    session_id = get_or_create_session_id(request)
     
     return {
-        "sessionId": request.session["sessionId"],
+        "sessionId": session_id,
         }

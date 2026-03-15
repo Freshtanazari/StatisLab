@@ -26,49 +26,49 @@ const Preview = ({ data, setColumns }) => {
 
 
   return (
-    <div className=" ">
-      <div className="preview space-y-6">
+    <div className="screen-shell">
+      <div className="preview space-y-5">
         {/* Summary Cards */}
-        <div className="summaryCards grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="card p-4 bg-white shadow rounded-lg flex flex-col items-center">
-            <span className="text-gray-500">Total Rows</span>
-            <span className="numbers text-lg font-bold">{totalRows}</span>
+        <div className="summaryCards grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="panel-block p-4 flex flex-col items-center">
+            <span className="text-slate-500 text-sm">Total Rows</span>
+            <span className="numbers text-2xl font-bold text-slate-800">{totalRows}</span>
           </div>
-          <div className="card p-4 bg-white shadow rounded-lg flex flex-col items-center">
-            <span className="text-gray-500">Total Columns</span>
-            <span className="numbers text-lg font-bold">{totalCols}</span>
+          <div className="panel-block p-4 flex flex-col items-center">
+            <span className="text-slate-500 text-sm">Total Columns</span>
+            <span className="numbers text-2xl font-bold text-slate-800">{totalCols}</span>
           </div>
-          <div className="card p-4 bg-white shadow rounded-lg flex flex-col items-center">
-            <span className="text-gray-500">Missing Cells</span>
-            <span className="numbers text-lg font-bold">
+          <div className="panel-block p-4 flex flex-col items-center">
+            <span className="text-slate-500 text-sm">Missing Cells</span>
+            <span className="numbers text-2xl font-bold text-orange-600">
               {missingPercentage}%
             </span>
           </div>
-          <div className="card p-4 bg-white shadow rounded-lg flex flex-col items-center">
-            <span className="text-gray-500">Data Types</span>
-            <span className="text-green-600">
+          <div className="panel-block p-4">
+            <span className="text-slate-500 text-sm block mb-2">Data Types</span>
+            <div className="max-h-24 overflow-y-auto space-y-1 pr-1">
               {Object.entries(dataTypes).map(([col, type]) => (
-                <p key={col}>
-                  {col}: {type}
+                <p key={col} className="text-xs text-slate-700">
+                  <span className="font-semibold">{col}</span>: {type}
                 </p>
               ))}
-            </span>
+            </div>
           </div>
         </div>
 
         {/* Data Preview */}
-        <div className="dataFramePreview bg-white p-4 shadow rounded-lg overflow-auto">
-          <span className="dataframeHeader font-semibold mb-2 block">
+        <div className="panel-block dataFramePreview p-4 overflow-auto">
+          <span className="dataframeHeader font-semibold mb-3 block text-slate-800">
             Raw Data Preview{" "}
-            <span className="text-gray-400 ">(First 5 rows)</span>
+            <span className="text-slate-400">(First 5 rows)</span>
           </span>
-          <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden ">
-            <thead className="bg-gray-800 text-white">
+          <table className="min-w-full border border-slate-200 rounded-lg overflow-hidden text-sm">
+            <thead className="bg-slate-800 text-white">
               <tr>
                 {columns.map((col, idx) => (
                   <th
                     key={idx}
-                    className="px-4 py-2 text-left border-b border-gray-300"
+                    className="px-4 py-2 text-left border-b border-slate-600"
                   >
                     {col}
                   </th>
@@ -77,11 +77,11 @@ const Preview = ({ data, setColumns }) => {
             </thead>
             <tbody>
               {dataset.map((obj, idx) => (
-                <tr key={idx} className="hover:bg-gray-100">
+                <tr key={idx} className="hover:bg-slate-50">
                   {Object.values(obj).map((cell, cidx) => (
                     <td
                       key={cidx}
-                      className="px-4 py-2 border-b border-gray-200"
+                      className="px-4 py-2 border-b border-slate-200"
                     >
                       {String(cell)}
                     </td>
@@ -90,8 +90,8 @@ const Preview = ({ data, setColumns }) => {
               ))}
             </tbody>
           </table>
-          <span className="wideView text-blue-600 mt-2 inline-block cursor-pointer hover:underline">
-            View all {totalRows} rows
+          <span className="wideView text-teal-700 mt-3 inline-block cursor-default text-sm">
+            Showing sample preview from {totalRows} rows
           </span>
         </div>
       </div>

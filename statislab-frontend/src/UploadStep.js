@@ -1,6 +1,18 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { apiUrl } from "./config/api";
+import { apiUrl, API_REQUEST_CONFIG } from "./config/api";
+
+const MAX_CSV_SIZE_BYTES = Number(process.env.REACT_APP_MAX_CSV_SIZE_BYTES || 10 * 1024 * 1024);
+
+function formatFileSize(bytes) {
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(0)} MB`;
+  }
+  if (bytes >= 1024) {
+    return `${(bytes / 1024).toFixed(0)} KB`;
+  }
+  return `${bytes} bytes`;
+}
 
 export default function UploadStep({ setData, setSessionId }) {
   const [file, setFile] = useState(null);
@@ -12,7 +24,14 @@ export default function UploadStep({ setData, setSessionId }) {
     if (!selectedFile) return;
 
     if (!selectedFile.name.endsWith(".csv")) {
+      setFile(null);
       alert("Only CSV files are allowed");
+      return;
+    }
+
+    if (selectedFile.size > MAX_CSV_SIZE_BYTES) {
+      setFile(null);
+      alert(`File is too large. Maximum allowed size is ${formatFileSize(MAX_CSV_SIZE_BYTES)}.`);
       return;
     }
 
@@ -36,7 +55,7 @@ export default function UploadStep({ setData, setSessionId }) {
     formData.append("file", file);
     try {
       setLoading(true);
-      const response = await axios.post(apiUrl("/upload"), formData);
+      const response = await axios.post(apiUrl("/upload"), formData, API_REQUEST_CONFIG);
       setData(response.data);
       setSessionId(response.data.sessionId)
     } catch (error) {
@@ -60,10 +79,10 @@ export default function UploadStep({ setData, setSessionId }) {
   };
 
   return (
-    <div className="flex justify-center items-center  bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <h4 className="text-xl font-semibold mb-2 text-gray-800">Upload Your Data</h4>
-        <p className="text-gray-600 mb-4">
+    <div className="screen-shell">
+      <div className="panel-block w-full max-w-2xl mx-auto p-8">
+        <h4 className="text-2xl font-semibold mb-2 text-slate-800">Upload Your Data</h4>
+        <p className="muted-help mb-5">
           Upload a CSV file to create a new Analysis job
         </p>
 
@@ -75,13 +94,15 @@ export default function UploadStep({ setData, setSessionId }) {
           }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-            isDragging ? "border-blue-400 bg-blue-50" : "border-gray-300 bg-gray-50"
+          className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
+            isDragging ? "border-teal-500 bg-teal-50" : "border-slate-300 bg-slate-50"
           }`}
         >
-          Drag and drop CSV or{" "}
+          <p className="text-slate-700 font-medium">
+            Drag and drop CSV or{" "}
+          </p>
           <span
-            className="text-blue-500 underline cursor-pointer"
+            className="text-teal-700 underline cursor-pointer"
             onClick={handleBrowse}
           >
             click to browse
@@ -91,21 +112,28 @@ export default function UploadStep({ setData, setSessionId }) {
             accept=".csv"
             style={{ display: "none" }}
             ref={inputRef}
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={(e) => handleFileSelect(e.target.files[0])}
           />
+          {file && (
+            <p className="mt-3 text-sm text-slate-600">
+              Selected: <span className="font-semibold">{file.name}</span>
+            </p>
+          )}
         </div>
 
         {/* button */}
         <button
           onClick={handleUpload}
           disabled={loading}
-          className={`mt-4 w-full py-2 px-4 rounded-lg font-semibold text-white transition ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+          className={`mt-5 w-full py-2 px-3 rounded-md text-sm font-medium text-white transition ${
+            loading ? "bg-slate-400 cursor-not-allowed" : "bg-teal-700 hover:bg-teal-800"
           }`}
         >
           {loading ? "Uploading..." : "Upload"}
         </button>
-        <p className="text-gray-500 text-sm mt-2">Supported files: only CSV files</p>
+        <p className="muted-help mt-3">
+          Supported files: CSV only, up to {formatFileSize(MAX_CSV_SIZE_BYTES)}
+        </p>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { apiUrl } from "../config/api";
+import axios from "axios";
+import { apiUrl, API_REQUEST_CONFIG } from "../config/api";
 
 const Modal = ({
   isOpen,
@@ -47,27 +48,28 @@ const Modal = ({
     try {
       setLoading(true);
 
-      const res = await fetch(apiUrl("/preprocess/action"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const res = await axios.post(
+        apiUrl("/preprocess/action"),
+        {
           sessionId,
           action: finalAction,
           params: finalParams,
-        }),
-      });
+        },
+        API_REQUEST_CONFIG,
+      );
 
-      if (!res.ok) {
-        throw new Error("Server error");
-      }
-
-      const data = await res.json();
+      const data = res.data;
 
       setResult(JSON.stringify(data.message) || "Action completed");
       setStage("result");
     } catch (err) {
       console.error("Error running action:", err);
-      setResult("Something went wrong.");
+      const errorMessage =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong.";
+      setResult(errorMessage);
       setStage("result");
     } finally {
       setLoading(false);
@@ -83,15 +85,15 @@ const Modal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white p-6 rounded shadow-lg w-[600px] max-w-[90vw]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+      <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 w-[620px] max-w-[95vw]">
         {stage === "confirm" && (
           <>
             {selection ? (
               <>
                 <p className="mb-2">{message}</p>
                 <select
-                  className="border p-2 my-2 rounded w-full"
+                  className="border border-slate-300 p-2 my-2 rounded-lg w-full"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                 >
@@ -116,7 +118,7 @@ const Modal = ({
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  className="w-full border rounded px-3 py-2 mb-4"
+                  className="w-full border border-slate-300 rounded-md px-2 py-1.5 mb-4 text-sm"
                   placeholder="Enter value..."
                 />
               </>
@@ -126,7 +128,7 @@ const Modal = ({
 
             <div className="flex justify-between">
               <button
-                className="bg-gray-300 px-3 py-1 rounded"
+                className="bg-slate-200 px-3 py-1.5 rounded-md text-sm"
                 onClick={handleClose}
                 disabled={loading}
               >
@@ -134,7 +136,7 @@ const Modal = ({
               </button>
 
               <button
-                className="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+                className="bg-teal-700 text-white px-3 py-1.5 rounded-md text-sm disabled:opacity-50"
                 onClick={runAction}
                 disabled={
                   loading ||
@@ -150,15 +152,15 @@ const Modal = ({
 
         {stage === "result" && (
           <>
-            <h2 className="text-sm text-center mb-4 font-semibold">
+            <h2 className="text-sm text-center mb-4 font-semibold text-slate-700 uppercase tracking-wide">
               Result
             </h2>
-            <pre className="bg-gray-100 p-2 rounded max-h-160 overflow-x-auto text-sm">
+            <pre className="bg-slate-100 p-3 rounded-xl max-h-160 overflow-x-auto text-sm border border-slate-200">
               {result}
             </pre>
             <div className="flex justify-end mt-3">
               <button
-                className="bg-gray-300 px-3 py-1 rounded"
+                className="bg-slate-200 px-3 py-1.5 rounded-md text-sm"
                 onClick={handleClose}
               >
                 Close

@@ -2,7 +2,7 @@ from .StatisticalTest import StatisticalTest
 from scipy.stats import ttest_rel
 import numpy as np
 from scipy.stats import shapiro
-from ..storage.DatasetStore import DatasetStore
+from ...storage.DatasetStore import DatasetStore
 import pandas as pd
 
 

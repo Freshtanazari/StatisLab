@@ -2,7 +2,7 @@ from .StatisticalTest import StatisticalTest
 from scipy.stats import mannwhitneyu
 import pandas as pd
 import numpy as np
-from ..storage.DatasetStore import DatasetStore
+from ...storage.DatasetStore import DatasetStore
 
 
 class MannWhitneyUtest(StatisticalTest):

@@ -1,28 +1,10 @@
-import pandas as pd
-import scipy 
-import matplotlib as plt
-import seaborn as sns
 from app.storage.DatasetStore import DatasetStore
-
 
 class Analysis:
     
     def __init__(self, sessionId: str, store: DatasetStore):
         self.dataset = store.getDataset(sessionId)
         self.df = self.dataset.df_current
-    
-        
-    # inspect dataset rows, columns and data types
-    # def inspect_dataset(self):
-
-    #     result = {
-    #         "rows" : self.df.shape[0], 
-    #         "columns" : self.df.shape[1], 
-    #         "column_names": self.df.columns.tolist(), 
-    #         "dtypes": self.df.dtypes.to_dict()
-    #     }
-    #     self.report.addAnalysis(result)
-
 
     # get the shema of the dataset
     def get_table_schema(self): 

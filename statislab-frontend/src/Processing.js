@@ -3,9 +3,9 @@ import { FaTrash, FaEdit, FaExchangeAlt } from "react-icons/fa"; // FontAwesome 
 import { FaEye } from "react-icons/fa"; // FontAwesome eye icon
 import Modal from "./components/Modal";
 import axios from "axios";
-import { apiUrl } from "./config/api";
+import { apiUrl, API_REQUEST_CONFIG } from "./config/api";
 
-const Processing = ({ data }) => {
+const Processing = ({ data, setColumns }) => {
   // modal open or not
   const [open, setOpen] = useState(false);
   // the table data we get from backend for display
@@ -37,9 +37,12 @@ useEffect(() => {
       sessionId: sessionId, 
       action: "tableData", 
       params: null,
-    });
+    }, API_REQUEST_CONFIG);
     // access the data 
     setTableData(response.data);
+    if (typeof setColumns === "function") {
+      setColumns(Object.keys(response.data || {}));
+    }
     console.log("Updated table data:", response.data);
 
     // getting the report data for logging
@@ -47,16 +50,16 @@ useEffect(() => {
       sessionId: sessionId, 
       action:"display_audit_log", 
       params: null,
-    });
+    }, API_REQUEST_CONFIG);
     setLogData(audit.data.message);
-    console.log("updated log data: thisis ", logData);
+    console.log("updated log data: thisis ", audit.data.message);
     setCurrentLog(audit.data.message ? Object.values(audit.data.message).length - 1 : 0); // set to the latest log
     }catch(err){
       console.error("error fetching tabel data:", err);
     }
   }
     fetchData();
-  }, [data?.sessionId, refreshTrigger]);
+  }, [data?.sessionId, refreshTrigger, setColumns]);
 
   
 
@@ -73,14 +76,16 @@ useEffect(() => {
   }
   // handle exporting logs
   async function handleExport(){
-    if(! logData){
+    if(! logData || Object.values(logData).length === 0){
       alert("No logs to export!");
+      return;
     }
     try {
       const sessionId = data?.sessionId;
       const response = await axios.post(apiUrl("/download_audit"),{
         sessionId: sessionId }
         ,{
+        ...API_REQUEST_CONFIG,
         responseType: "blob", // for file download
       })
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -97,7 +102,7 @@ useEffect(() => {
   }
 
   return (
-    <div className=" bg-gray-100 ">
+    <div className="screen-shell">
     {/* modal for confirmation and input */}
       <Modal
         isOpen={open}
@@ -114,13 +119,13 @@ useEffect(() => {
         }}
       />
 
-      <h4 className="text-sm font-semibold text-gray-800">Column Inspection</h4>
-      <p className="text-gray-600 ">Review and fix data quality issues</p>
+      <h4 className="text-xl font-semibold text-slate-800">Column Inspection</h4>
+      <p className="muted-help mt-1">Review and fix data quality issues</p>
 
       {/* Dataset-level actions */}
-      <div className="bg-white p-4 rounded-md shadow-sm my-2">
-        Dataset level Actions
-        <div className="flex gap-4 mt-2">
+      <div className="panel-block p-4 my-4">
+        <p className="font-semibold text-slate-700">Dataset-Level Actions</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3 mt-3">
           {[
             {
               label: "Drop Null Values",
@@ -163,7 +168,7 @@ useEffect(() => {
             <button
               key={idx}
               onClick={action.onClick}
-              className=" flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+              className="brand-button w-full text-sm"
             >
               {action.label}
             </button>
@@ -172,26 +177,26 @@ useEffect(() => {
       </div>
 
       {/* Column-level cards */}
-      <div className="bg-white p-4 rounded-md shadow-sm my-2">
-        Column-level Actions
+      <div className="panel-block p-4 my-4">
+        <p className="font-semibold text-slate-700">Column-Level Actions</p>
         {/* Table */}
-        <div className="overflow-x-auto bg-white my-2 border ">
+        <div className="overflow-x-auto bg-white my-3 border border-slate-200 rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-2 text-left font-medium text-gray-700">
+                <th className="px-4 py-2 text-left font-medium text-slate-700">
                   Name & Types
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-700">
+                <th className="px-4 py-2 text-left font-medium text-slate-700">
                   Missing %
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-700">
+                <th className="px-4 py-2 text-left font-medium text-slate-700">
                   Display Unique
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-700">
+                <th className="px-4 py-2 text-left font-medium text-slate-700">
                   Describe
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-700">
+                <th className="px-4 py-2 text-left font-medium text-slate-700">
                   Quick Actions
                 </th>
               </tr>
@@ -206,7 +211,7 @@ useEffect(() => {
                   <td className="px-4 py-2">
                     {col.missing}%
                     <button 
-                    className="bg-yellow-200 text-yellow-800 rounded-sm px-2 ml-2 cursor-pointer"
+                    className="bg-amber-100 text-amber-700 rounded px-2 py-1 ml-2 cursor-pointer text-xs"
                      onClick={() => {
                         stageAction("handleMissing", { colName: col.name }, "Choose the correct method to handle the null values.");
                       }}
@@ -267,31 +272,31 @@ useEffect(() => {
       </div>
 
       {/* Loggings */}
-      <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md ">
-        <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onClick={()=> {
+      <div className="panel-block flex items-center justify-between p-4 mt-4">
+        <button className="px-2 py-1 bg-slate-100 rounded hover:bg-slate-200" onClick={()=> {
           if (currentLog > 0){
             setCurrentLog(currentLog -1)    
           } 
         }}>
           &larr;
         </button>
-        <div className="flex-1 mx-4 overflow-x-auto whitespace-nowrap text-center">
+        <div className="flex-1 mx-4 overflow-x-auto whitespace-nowrap text-center text-sm">
           {logReports.length > 0 ? (
-            <span  className="inline-block mx-2 text-gray-700">
+            <span  className="inline-block mx-2 text-slate-700">
               {logReports[currentLog].timestamp} : {logReports[currentLog].details}
             </span>
           ): (
-            <span className="inline-block mx-2 text-gray-700"> No logs for display</span>
+            <span className="inline-block mx-2 text-slate-700"> No logs for display</span>
           )}
 
         </div>
-        <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300" onClick={()=> {
+        <button className="px-2 py-1 bg-slate-100 rounded hover:bg-slate-200" onClick={()=> {
           if (currentLog < logReports.length - 1) {
             setCurrentLog(currentLog + 1)
           }}}>
           &rarr;
         </button>
-        <button onClick={handleExport}className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        <button onClick={handleExport}className="ml-4 px-3 py-1.5 bg-teal-700 text-white rounded-md text-sm hover:bg-teal-800">
           Export Logs
         </button>
       </div>

@@ -18,7 +18,7 @@
  }
 .dragDropUploader{
   background-color: rgb(239, 237, 237);
-  font-size: 15px;
+  font-size: 13px;
   text-align: center;
   border: 2px dashed rgb(223, 209, 209);
   padding: 40px;
@@ -26,7 +26,7 @@
 .browseLink {
   color: blue;
   display: block;
-  font-size: 10px;
+  font-size: 11px;
 }
 .btn {
   width: 20%;
@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  font-size: 16px;
+  font-size: 13px;
   line-height:35px;
 }
 .card{
@@ -61,7 +61,7 @@
   margin: 0 auto;
   border-radius: 10px;
   overflow: hidden; /* REQUIRED */
-  font-size: 14px;
+  font-size: 12px;
   padding: 20px 0px;
   background-color: white;
   text-align: center;
@@ -96,7 +96,7 @@ th, td {
   width: 80%;
   margin: 0 auto;
   padding: 50px;
-  font-size: 13px;
+  font-size: 12px;
 }
 .loggings{
   background-color: white;

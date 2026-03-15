@@ -2,7 +2,7 @@ import pandas as pd
 from scipy.stats import ttest_ind, shapiro, levene
 import numpy as np
 from .StatisticalTest import StatisticalTest
-from ..storage.DatasetStore import DatasetStore
+from ...storage.DatasetStore import DatasetStore
 
 # notes: handle when the coluumns have null values
 

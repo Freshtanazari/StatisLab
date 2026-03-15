@@ -2,8 +2,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
-from app.models.Dataset import Dataset 
-from app.models.Report import Report
+import uuid
+
 from app.storage.DatasetStore import DatasetStore
 
 
@@ -11,8 +11,10 @@ from app.storage.DatasetStore import DatasetStore
 class Visualizer:
     
     def __init__(self,sessionId,store, save_dir = "plots", palette="husl", theme="whitegrid"):
+        self.session_id = sessionId
         self.df = store.getDataset(sessionId).df_current
-        self.save_dir = save_dir
+        self.base_save_dir = save_dir
+        self.save_dir = os.path.join(save_dir, sessionId)
         self.dataset = store.getDataset(sessionId) 
         self.palette = palette
         self.theme = theme
@@ -22,20 +24,27 @@ class Visualizer:
 
     # helper function for saving the plots:
     def save_plots(self, fig, plot_name, columns = None, file_suffix = None):
+        def _sanitize_file_part(value):
+            return "".join(
+                char if char.isalnum() or char in {"-", "_"} else "_"
+                for char in str(value)
+            )[:50]
+
         if file_suffix is None:
             if columns:
-                file_suffix = "_".join(columns)
+                file_suffix = "_".join(_sanitize_file_part(column) for column in columns if column)
             else:
                 file_suffix = "all"
         
-        file_name = f"{plot_name}_{file_suffix}.png"
+        file_name = f"{plot_name}_{file_suffix}_{uuid.uuid4().hex}.png"
         save_path = os.path.join(self.save_dir, file_name)
         fig.savefig(save_path, bbox_inches="tight")
         plt.close(fig)
         result =  {
             "plot_name" : plot_name, 
             "plot_columns" : columns, 
-            "saved_path" : file_name
+            "saved_path" : file_name,
+            "plot_url": f"/plots/{file_name}",
         }
         self.dataset.report.addAnalysis(result)
         return result

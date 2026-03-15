@@ -1,7 +1,7 @@
 from scipy.stats import f_oneway
 from scipy.stats import shapiro, levene
 from .StatisticalTest import StatisticalTest
-from ..storage.DatasetStore import DatasetStore
+from ...storage.DatasetStore import DatasetStore
 import pandas as pd
 
 

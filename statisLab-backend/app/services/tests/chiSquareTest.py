@@ -1,9 +1,9 @@
 import pandas as pd
 from scipy.stats import chi2_contingency 
 from .StatisticalTest import StatisticalTest
-from ..models.Dataset import Dataset
-from ..storage.DatasetStore import DatasetStore
-from ..models.Report import Report
+from ...models.Dataset import Dataset
+from ...storage.DatasetStore import DatasetStore
+from ...models.Report import Report
 
 class ChiSquareTest(StatisticalTest):
     """

@@ -1,7 +1,7 @@
 from .StatisticalTest import StatisticalTest
 from scipy.stats import wilcoxon
-from ..models.Dataset import Dataset
-from ..storage.DatasetStore import DatasetStore
+from ...models.Dataset import Dataset
+from ...storage.DatasetStore import DatasetStore
 import numpy as np 
 import pandas as pd
 
