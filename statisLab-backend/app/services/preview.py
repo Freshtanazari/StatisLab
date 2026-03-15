@@ -11,7 +11,6 @@ def previewFile(df: pd.DataFrame, n: int = 10): # returns a list
     """
    
     preview = df.head(n).to_dict(orient="records")
-    print(preview)
     return preview
 
 def getTotalColumnsAndRows(dataset: pd.DataFrame):

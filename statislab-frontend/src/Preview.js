@@ -11,19 +11,23 @@ const Preview = ({ data, setColumns }) => {
   const missingPercentage = data?.missingPercentage;
   const dataTypes = data?.dataTypes || {};
 
+  function cleanedDataTypes(dataTypes) {
+    const cleaned = new Set();
+    for (const dtype of Object.values(dataTypes)) {
+      cleaned.add(String(dtype).toLowerCase());
+    }
+    return cleaned;
+  }
+
   useEffect(() => {
     if (setColumns && columns.length > 0) {
       setColumns(columns);
     }
-  }, [setColumns, columns]); 
+  }, [setColumns, columns]);
 
   if (!data || dataset.length === 0) {
     return <p className="text-gray-500 italic">No data to preview</p>; // safe fallback
   }
-
-
-
-
 
   return (
     <div className="screen-shell">
@@ -32,11 +36,15 @@ const Preview = ({ data, setColumns }) => {
         <div className="summaryCards grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <div className="panel-block p-4 flex flex-col items-center">
             <span className="text-slate-500 text-sm">Total Rows</span>
-            <span className="numbers text-2xl font-bold text-slate-800">{totalRows}</span>
+            <span className="numbers text-2xl font-bold text-slate-800">
+              {totalRows}
+            </span>
           </div>
           <div className="panel-block p-4 flex flex-col items-center">
             <span className="text-slate-500 text-sm">Total Columns</span>
-            <span className="numbers text-2xl font-bold text-slate-800">{totalCols}</span>
+            <span className="numbers text-2xl font-bold text-slate-800">
+              {totalCols}
+            </span>
           </div>
           <div className="panel-block p-4 flex flex-col items-center">
             <span className="text-slate-500 text-sm">Missing Cells</span>
@@ -45,12 +53,17 @@ const Preview = ({ data, setColumns }) => {
             </span>
           </div>
           <div className="panel-block p-4">
-            <span className="text-slate-500 text-sm block mb-2">Data Types</span>
+            <span className="text-slate-500 text-sm block mb-2">
+              Data Types
+            </span>
             <div className="max-h-24 overflow-y-auto space-y-1 pr-1">
-              {Object.entries(dataTypes).map(([col, type]) => (
-                <p key={col} className="text-xs text-slate-700">
-                  <span className="font-semibold">{col}</span>: {type}
-                </p>
+              {[...cleanedDataTypes(dataTypes).values()].map((dtype, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-sm mr-1"
+                >
+                  {dtype}
+                </span>
               ))}
             </div>
           </div>
@@ -63,12 +76,12 @@ const Preview = ({ data, setColumns }) => {
             <span className="text-slate-400">(First 5 rows)</span>
           </span>
           <table className="min-w-full border border-slate-200 rounded-lg overflow-hidden text-sm">
-            <thead className="bg-slate-800 text-white">
+            <thead className="bg-teal-700 text-white">
               <tr>
                 {columns.map((col, idx) => (
                   <th
                     key={idx}
-                    className="px-4 py-2 text-left border-b border-slate-600"
+                    className="px-4 py-2 text-left border-b border-teal-800"
                   >
                     {col}
                   </th>

@@ -43,7 +43,6 @@ useEffect(() => {
     if (typeof setColumns === "function") {
       setColumns(Object.keys(response.data || {}));
     }
-    console.log("Updated table data:", response.data);
 
     // getting the report data for logging
     const audit = await axios.post(apiUrl("/preprocess/action"), {
@@ -52,7 +51,6 @@ useEffect(() => {
       params: null,
     }, API_REQUEST_CONFIG);
     setLogData(audit.data.message);
-    console.log("updated log data: thisis ", audit.data.message);
     setCurrentLog(audit.data.message ? Object.values(audit.data.message).length - 1 : 0); // set to the latest log
     }catch(err){
       console.error("error fetching tabel data:", err);
@@ -177,26 +175,26 @@ useEffect(() => {
       </div>
 
       {/* Column-level cards */}
-      <div className="panel-block p-4 my-4">
-        <p className="font-semibold text-slate-700">Column-Level Actions</p>
+      <div className="panel-block px-3 py-2 my-4">
+        <p className="font-semibold text-slate-700 text-sm">Column-Level Actions</p>
         {/* Table */}
-        <div className="overflow-x-auto bg-white my-3 border border-slate-200 rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-slate-50">
+        <div className="overflow-x-auto bg-white my-2 border border-slate-200 rounded-lg">
+          <table className="min-w-full divide-y divide-gray-200 text-xs">
+            <thead className="bg-teal-700 text-white">
               <tr>
-                <th className="px-4 py-2 text-left font-medium text-slate-700">
+                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
                   Name & Types
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-slate-700">
+                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
                   Missing %
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-slate-700">
+                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
                   Display Unique
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-slate-700">
+                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
                   Describe
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-slate-700">
+                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
                   Quick Actions
                 </th>
               </tr>
@@ -204,14 +202,14 @@ useEffect(() => {
             <tbody className="divide-y divide-gray-200">
               {columnsArray.map((col, idx) => (
                 <tr key={idx}>
-                  <td className="px-4 py-2">
+                  <td className="px-3 py-1.5 text-xs">
                     <strong>{col.name}</strong>
-                    <div className="text-gray-500 ">{col.type}</div>
+                    <div className="text-gray-500 text-[11px]">{col.type}</div>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-3 py-1.5 text-xs">
                     {col.missing}%
                     <button 
-                    className="bg-amber-100 text-amber-700 rounded px-2 py-1 ml-2 cursor-pointer text-xs"
+                    className="bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 ml-1.5 cursor-pointer text-[11px]"
                      onClick={() => {
                         stageAction("handleMissing", { colName: col.name }, "Choose the correct method to handle the null values.");
                       }}
@@ -219,18 +217,18 @@ useEffect(() => {
                       Fix
                     </button>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-3 py-1.5 text-xs">
                     {col.nUnique.toString()}
                     <FaEye
-                      className="text-black-500 cursor-pointer"
+                      className="text-black-500 cursor-pointer inline ml-1"
                       onClick={() => {
                         stageAction("displayUnique", { colName: col.name }, "Display all the unique values in the column.");
                         setNeedInput(false);
                       }}
                     ></FaEye>
                   </td>
-                  <td className="px-4 py-2">
-                    <button className="bg-blue-300 rounded-sm px-2 cursor-pointer"
+                  <td className="px-3 py-1.5 text-xs">
+                    <button className="bg-teal-200 text-teal-800 rounded-sm px-1.5 py-0.5 cursor-pointer text-[11px]"
                       onClick={() =>
                         stageAction(col.describe.toString(), {
 
@@ -241,7 +239,7 @@ useEffect(() => {
                       {col.describe}
                     </button>
                   </td>
-                  <td className="px-4 py-2 flex gap-2">
+                  <td className="px-3 py-1.5 flex gap-1.5 text-sm">
                     <FaTrash
                       className="text-red-500 cursor-pointer"
                       onClick={() => {
@@ -257,7 +255,7 @@ useEffect(() => {
                       }}
                     />
                     <FaExchangeAlt
-                      className="text-blue-500 cursor-pointer"
+                      className="text-teal-600 cursor-pointer"
                       onClick={() => {
                         stageAction("changeDtype", { colName: col.name }, "Choose the new column type: ");
                         setNeedInput(true);
@@ -283,7 +281,7 @@ useEffect(() => {
         <div className="flex-1 mx-4 overflow-x-auto whitespace-nowrap text-center text-sm">
           {logReports.length > 0 ? (
             <span  className="inline-block mx-2 text-slate-700">
-              {logReports[currentLog].timestamp} : {logReports[currentLog].details}
+              {logReports[currentLog]?.details || "No message available"}
             </span>
           ): (
             <span className="inline-block mx-2 text-slate-700"> No logs for display</span>

@@ -1,6 +1,5 @@
 import seaborn as sns 
 import matplotlib.pyplot as plt
-import pandas as pd
 import os
 import uuid
 
@@ -188,35 +187,3 @@ class Visualizer:
         sns.heatmap(self.df.isnull(), cbar=False)
         plt.title("Missingness Heatmap")
         return self.save_plots(fig, plot_name="missingness_heatmap")
-
-
-def main():
-    df = pd.read_csv("sample_data/vizsampledata.csv")
-    # viz = Visualizer(df)
-    # theme, and palette
-    viz = Visualizer(df, palette="coolwarm", theme="darkgrid")
-
-    result_box = viz.boxplot("salary")
-    result_hist = viz.histogram("age")
-    result_kde = viz.kde("age")
-    result_bar = viz.barplot("gender")
-    result_scatter = viz.scatterplot("age", "salary")
-    result_line = viz.lineplot("age", "salary")
-    result_pie = viz.pieChart("gender")
-    result_heatmap = viz.heatmap()
-    result_pairplot = viz.pairplot()
-    result_violinplot = viz.violinplot("salary", "gender")
-
-
-    # Print results
-    print(result_box)
-    print(result_hist)
-    print(result_kde)
-    print(result_bar)
-    print(result_scatter)
-    print(result_line)
-    print(result_pie)
-
-
-if __name__ == "__main__":
-    main()

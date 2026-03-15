@@ -78,7 +78,6 @@ class preprocessor:
             self.log_changes(f"Column '{colName}' converted to {dType}")
             return f"Column '{colName}' converted to {dType}"
         except (ValueError, TypeError):
-            print("type error")
             return f"Invalid conversion: column '{colName}' cannot be converted to {dType}"
         
     #convert to numeric all possible columns (transfomer)
@@ -143,7 +142,6 @@ class preprocessor:
         return "Imputted Null values of column "+colName+" using the backward fill method";
     #transfomer
     def imputeByMode(self, colName):
-        print("impute by mode is called")
         if not columnExists(self.df, colName):
             raise KeyError(f"Column '{colName}' does not exist")
         # fills the rows with missing values in a specific column using its most frequent value

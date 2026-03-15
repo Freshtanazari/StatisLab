@@ -118,8 +118,6 @@ const AnalysisCard = ({
     const sectionsAPIPoints = {"Data Visualization" : "visualizer", "Statistical Tests" : "Stest", "Descriptive Analysis": "descriptive"}
     const apiEndPoint = sectionsAPIPoints[instance.section]
     try {
-      console.log("sending to the backend: ", payload);
-
       const response = await axios.post(
         apiUrl(`/${apiEndPoint}`),
         payload,
@@ -147,79 +145,117 @@ const AnalysisCard = ({
         [instance.id]: { loading: false, error: errorMessage },
       }));
     }
-    console.log("the analysis is run and result is retrieved")
-    console.log(selectedAnalysis);
   };
+
+  const isVisualizationAnalysis = (instance) =>
+    instance?.section === "Data Visualization";
+
+  const groupedAnalysis = [];
+  for (let i = 0; i < selectedAnalysis.length; i += 1) {
+    const current = selectedAnalysis[i];
+    const next = selectedAnalysis[i + 1];
+
+    if (isVisualizationAnalysis(current) && isVisualizationAnalysis(next)) {
+      groupedAnalysis.push([current, next]);
+      i += 1;
+    } else {
+      groupedAnalysis.push([current]);
+    }
+  }
+
+  const getCardClassName = (instance) => {
+    const base = "bg-teal-50 rounded shadow relative hover:shadow-lg transition";
+    if (isVisualizationAnalysis(instance)) {
+      return `${base} px-2.5 py-1.5`;
+    }
+    return `${base} px-4 py-3`;
+  };
+
   return (
     <div className=" flex flex-col gap-3">
-      {selectedAnalysis.map((instance) => (
+      {groupedAnalysis.map((group, groupIndex) => (
         <div
-          key={instance.id}
-          className="bg-blue-50  p-4 rounded shadow relative hover:shadow-lg transition"
+          key={`analysis-group-${groupIndex}`}
+          className={group.length === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-3" : ""}
         >
-          <button
-            onClick={() => deleteAnalysis(instance.id)}
-            className="absolute top-2 right-2 text-xl text-red-500 hover:text-red-700 font-bold"
-          >
-            &times;
-          </button>
-
-          <h5 className="font-semibold text-blue-700">{instance.name}</h5>
-          {/* show all the parameters needed as input */}
-          {instance.params.map((param, index) => (
-            <div key={index} className="mb-2">
-              {(() => {
-                const allowedColumns = getAllowedColumns(instance, param);
-                return (
-                  <>
-              <label className="block text-gray-700">{instance.parametersNames[index]}</label>
-              <select
-                value={paramValues[instance.id]?.[param] || ""}
-                onChange={(e) =>
-                  handleParamChange(instance.id, param, e.target.value)
-                }
-                className="mt-1 block w-full border-gray-300 rounded"
-                disabled={allowedColumns.length === 0}
+          {group.map((instance) => (
+            <div
+              key={instance.id}
+              className={getCardClassName(instance)}
+            >
+              <button
+                onClick={() => deleteAnalysis(instance.id)}
+                className="absolute top-2 right-2 text-xl text-red-500 hover:text-red-700 font-bold"
               >
-                <option value="">Select column</option>
-                {allowedColumns.map((column, i) => (
-                  <option key={i} value={column}>
-                    {column}
-                  </option>
-                ))}
-              </select>
-              {allowedColumns.length === 0 && (
-                <p className="mt-1 text-xs text-amber-700">
-                  No valid columns found for this input type.
-                </p>
+                &times;
+              </button>
+
+              <h5 className={`font-semibold text-teal-800 ${isVisualizationAnalysis(instance) ? "text-sm pr-6" : "pr-6"}`}>
+                {instance.name}
+              </h5>
+              {/* show all the parameters needed as input */}
+              {instance.params.map((param, index) => (
+                <div key={index} className={isVisualizationAnalysis(instance) ? "mb-1.5" : "mb-2"}>
+                  {(() => {
+                    const allowedColumns = getAllowedColumns(instance, param);
+                    return (
+                      <>
+                  <label className={`block text-gray-700 ${isVisualizationAnalysis(instance) ? "text-xs" : ""}`}>
+                    {instance.parametersNames[index]}
+                  </label>
+                  <select
+                    value={paramValues[instance.id]?.[param] || ""}
+                    onChange={(e) =>
+                      handleParamChange(instance.id, param, e.target.value)
+                    }
+                    className={`mt-1 block w-full border-gray-300 rounded ${isVisualizationAnalysis(instance) ? "text-xs py-1" : ""}`}
+                    disabled={allowedColumns.length === 0}
+                  >
+                    <option value="">Select column</option>
+                    {allowedColumns.map((column, i) => (
+                      <option key={i} value={column}>
+                        {column}
+                      </option>
+                    ))}
+                  </select>
+                  {allowedColumns.length === 0 && (
+                    <p className="mt-1 text-xs text-amber-700">
+                      No valid columns found for this input type.
+                    </p>
+                  )}
+                      </>
+                    );
+                  })()}
+                </div>
+              ))}
+
+              {/* for each instance */}
+              <button
+                className={` bg-teal-700 text-white rounded-md hover:bg-teal-800 transition disabled:opacity-60 disabled:cursor-not-allowed ${
+                  isVisualizationAnalysis(instance) ? "px-2 py-1 text-xs" : "px-2.5 py-1 text-sm"
+                }`}
+                onClick={() => runAnalysis(instance)}
+                disabled={runState[instance.id]?.loading}
+              >
+                {runState[instance.id]?.loading ? "Analyzing..." : "Run Analysis"}
+              </button>
+
+              {runState[instance.id]?.error && (
+                <div className="mt-3 rounded border border-red-200 bg-red-50 p-2 text-sm text-red-700">
+                  {runState[instance.id]?.error}
+                </div>
               )}
-                  </>
-                );
-              })()}
+
+              {instance.result && (
+                <div className={isVisualizationAnalysis(instance) ? "mt-2" : "mt-4"}>
+                  <p className={`uppercase tracking-wide text-slate-500 ${isVisualizationAnalysis(instance) ? "text-[10px] mb-1" : "text-xs mb-2"}`}>
+                    Latest Result
+                  </p>
+                  <ResultRenderer result={instance.result} />
+                </div>
+              )}
             </div>
           ))}
-
-          {/* for each instance */}
-          <button
-            className="bg-blue-500 text-white px-2.5 py-1 rounded-md text-sm hover:bg-blue-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
-            onClick={() => runAnalysis(instance)}
-            disabled={runState[instance.id]?.loading}
-          >
-            {runState[instance.id]?.loading ? "Analyzing..." : "Run Analysis"}
-          </button>
-
-          {runState[instance.id]?.error && (
-            <div className="mt-3 rounded border border-red-200 bg-red-50 p-2 text-sm text-red-700">
-              {runState[instance.id]?.error}
-            </div>
-          )}
-
-          {instance.result && (
-            <div className="mt-4 p-3 bg-white border border-blue-200 rounded shadow-sm">
-              <p className="text-xs uppercase tracking-wide text-slate-500 mb-2">Latest Result</p>
-              <ResultRenderer result={instance.result} />
-            </div>
-          )}
         </div>
     ))}
     </div>

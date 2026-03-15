@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar.js";
+import LandingPage from "./components/LandingPage.js";
 import UploadStep from "./UploadStep.js";
 import Preview from "./Preview.js";
 import Processing from "./Processing.js";
@@ -15,12 +16,23 @@ const STEPS = [
   { number: 5, label: "Report", hint: "Summarize what you discovered." },
 ];
 
+const getViewFromHash = () => (window.location.hash === "#/app" ? "workspace" : "landing");
+
 function App() {
   const [data, setData] = useState(null);
   const [step, setStep] = useState(1);
   const [columns, setColumns] = useState(null);
   const [sessionId, setSessionId] = useState(null);
   const [analysisBoxes, setAnalysisBoxes] = useState([]);
+  const [view, setView] = useState(getViewFromHash);
+
+  const openWorkspace = () => {
+    window.location.hash = "/app";
+  };
+
+  const openLandingPage = () => {
+    window.location.hash = "/";
+  };
 
   const displayNextStep = () => {
     if (step < 5) setStep(step + 1);
@@ -66,7 +78,20 @@ function App() {
   }, [analysisBoxes, sessionId]);
 
   useEffect(() => {
+    const onHashChange = () => {
+      setView(getViewFromHash());
+    };
+
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  useEffect(() => {
     const onKeyDown = (event) => {
+      if (view !== "workspace") {
+        return;
+      }
+
       const tagName = event.target?.tagName?.toLowerCase();
       const isTypingTarget =
         tagName === "input" ||
@@ -91,7 +116,7 @@ function App() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [step, isNextDisabled]);
+  }, [step, isNextDisabled, view]);
 
   const activeStepMeta = STEPS.find((item) => item.number === step);
   const progress = (step / STEPS.length) * 100;
@@ -114,10 +139,24 @@ function App() {
     return <Report sessionId={sessionId} />;
   };
 
+  if (view === "landing") {
+    return (
+      <div className="app-shell marketing-shell">
+        <Navbar mode="landing" onNavigateWorkspace={openWorkspace} />
+        <LandingPage steps={STEPS} onEnterWorkspace={openWorkspace} />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">
-        <Navbar steps={STEPS} currentStep={step} />
+        <Navbar
+          steps={STEPS}
+          currentStep={step}
+          mode="workspace"
+          onNavigateHome={openLandingPage}
+        />
       </header>
 
       <main className="app-main">
