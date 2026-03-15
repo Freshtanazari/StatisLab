@@ -69,14 +69,19 @@ const getImageFileName = (result) => {
   return imagePathValue.split(/[\\/]/).pop();
 };
 
-const getImageUrl = (result) => {
+const getImageUrl = (result, sessionId) => {
   if (!isPlainObject(result)) {
     return null;
   }
 
+  const resolvedSessionId = sessionId || result.sessionId;
+
   const plotUrl = result.plot_url;
   if (typeof plotUrl === "string" && plotUrl.startsWith("/")) {
-    return apiUrl(plotUrl);
+    const query = resolvedSessionId
+      ? `?sessionId=${encodeURIComponent(resolvedSessionId)}`
+      : "";
+    return apiUrl(`${plotUrl}${query}`);
   }
 
   const imageFileName = getImageFileName(result);
@@ -84,7 +89,10 @@ const getImageUrl = (result) => {
     return null;
   }
 
-  return apiUrl(`/plots/${imageFileName}`);
+  const query = resolvedSessionId
+    ? `?sessionId=${encodeURIComponent(resolvedSessionId)}`
+    : "";
+  return apiUrl(`/plots/${imageFileName}${query}`);
 };
 
 const getPValueStatus = (value) => {
@@ -172,7 +180,7 @@ const ArrayRenderer = ({ data, title, compactMode, variant }) => {
   );
 };
 
-const ResultRenderer = ({ result, variant = "default" }) => {
+const ResultRenderer = ({ result, variant = "default", sessionId = null }) => {
   const [compactMode, setCompactMode] = useState(true);
   const isReportVariant = variant === "report";
   const wrapperClass = isReportVariant ? "space-y-3" : "space-y-4";
@@ -215,7 +223,7 @@ const ResultRenderer = ({ result, variant = "default" }) => {
     );
   }
 
-  const imageUrl = getImageUrl(result);
+  const imageUrl = getImageUrl(result, sessionId);
   const plotName = typeof result.plot_name === "string" ? result.plot_name : null;
   const primitiveEntries = Object.entries(result).filter(
     ([key, value]) =>

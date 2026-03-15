@@ -251,7 +251,7 @@ const AnalysisCard = ({
                   <p className={`uppercase tracking-wide text-slate-500 ${isVisualizationAnalysis(instance) ? "text-[10px] mb-1" : "text-xs mb-2"}`}>
                     Latest Result
                   </p>
-                  <ResultRenderer result={instance.result} />
+                  <ResultRenderer result={instance.result} sessionId={sessionId} />
                 </div>
               )}
             </div>

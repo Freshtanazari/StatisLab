@@ -160,7 +160,11 @@ const Report = ({ sessionId }) => {
                           </button>
                         </div>
                       </div>
-                      <ResultRenderer result={reportItem?.result ?? reportItem} variant="report" />
+                      <ResultRenderer
+                        result={reportItem?.result ?? reportItem}
+                        variant="report"
+                        sessionId={reportItem?.sessionId || sessionId}
+                      />
                     </div>
                   ))}
                 </div>
