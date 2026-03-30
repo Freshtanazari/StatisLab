@@ -131,6 +131,10 @@ export default function UploadStep({ setData, setSessionId }) {
         >
           {loading ? "Uploading..." : "Upload"}
         </button>
+        <div className="text-red-500 text-sm overflow-auto">
+          {file ? "The File has been Uploaded, You can reupload another file too." : "No file uploaded"}
+        </div>
+
         <p className="muted-help mt-3">
           Supported files: CSV only, up to {formatFileSize(MAX_CSV_SIZE_BYTES)}
         </p>

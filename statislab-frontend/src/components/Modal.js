@@ -2,6 +2,22 @@ import React, { useState } from "react";
 import axios from "axios";
 import { apiUrl, API_REQUEST_CONFIG } from "../config/api";
 
+const formatResultMessage = (value) => {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (value === null || value === undefined) {
+    return "Action completed";
+  }
+
+  if (typeof value === "object") {
+    return JSON.stringify(value, null, 2);
+  }
+
+  return String(value);
+};
+
 const Modal = ({
   isOpen,
   onClose,
@@ -60,7 +76,7 @@ const Modal = ({
 
       const data = res.data;
 
-      setResult(JSON.stringify(data.message) || "Action completed");
+      setResult(formatResultMessage(data?.message));
       setStage("result");
     } catch (err) {
       console.error("Error running action:", err);
@@ -106,7 +122,6 @@ const Modal = ({
                     Median Imputation (Numeric)
                   </option>
                   <option value="imputeByMode">Mode Imputation</option>
-                  <option value="imputeByConstant">Constant Imputation</option>
                   <option value="imputeBybfill">Backward Fill</option>
                   <option value="imputeByffill">Forward Fill</option>
                 </select>
@@ -155,9 +170,9 @@ const Modal = ({
             <h2 className="text-sm text-center mb-4 font-semibold text-slate-700 uppercase tracking-wide">
               Result
             </h2>
-            <pre className="bg-slate-100 p-3 rounded-xl max-h-160 overflow-x-auto text-sm border border-slate-200">
+            <div className="bg-slate-100 p-3 rounded-xl max-h-64 overflow-y-auto text-sm border border-slate-200 whitespace-pre-wrap break-words">
               {result}
-            </pre>
+            </div>
             <div className="flex justify-end mt-3">
               <button
                 className="bg-slate-200 px-3 py-1.5 rounded-md text-sm"

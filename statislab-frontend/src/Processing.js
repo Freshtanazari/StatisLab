@@ -176,25 +176,25 @@ useEffect(() => {
 
       {/* Column-level cards */}
       <div className="panel-block px-3 py-2 my-4">
-        <p className="font-semibold text-slate-700 text-sm">Column-Level Actions</p>
+        <p className="font-semibold text-slate-700 text-base">Column-Level Actions</p>
         {/* Table */}
         <div className="overflow-x-auto bg-white my-2 border border-slate-200 rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200 text-xs">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-teal-700 text-white">
               <tr>
-                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
+                <th className="px-3 py-2 text-left font-medium text-sm border-b border-teal-800">
                   Name & Types
                 </th>
-                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
+                <th className="px-3 py-2 text-left font-medium text-sm border-b border-teal-800">
                   Missing %
                 </th>
-                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
+                <th className="px-3 py-2 text-left font-medium text-sm border-b border-teal-800">
                   Display Unique
                 </th>
-                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
+                <th className="px-3 py-2 text-left font-medium text-sm border-b border-teal-800">
                   Describe
                 </th>
-                <th className="px-3 py-1.5 text-left font-medium text-xs border-b border-teal-800">
+                <th className="px-3 py-2 text-left font-medium text-sm border-b border-teal-800">
                   Quick Actions
                 </th>
               </tr>
@@ -202,14 +202,14 @@ useEffect(() => {
             <tbody className="divide-y divide-gray-200">
               {columnsArray.map((col, idx) => (
                 <tr key={idx}>
-                  <td className="px-3 py-1.5 text-xs">
+                  <td className="px-3 py-2 text-sm">
                     <strong>{col.name}</strong>
-                    <div className="text-gray-500 text-[11px]">{col.type}</div>
+                    <div className="text-gray-500 text-xs">{col.type}</div>
                   </td>
-                  <td className="px-3 py-1.5 text-xs">
+                  <td className="px-3 py-2 text-sm">
                     {col.missing}%
                     <button 
-                    className="bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 ml-1.5 cursor-pointer text-[11px]"
+                    className="bg-amber-100 text-amber-700 rounded px-2 py-1 ml-2 cursor-pointer text-xs"
                      onClick={() => {
                         stageAction("handleMissing", { colName: col.name }, "Choose the correct method to handle the null values.");
                       }}
@@ -217,18 +217,18 @@ useEffect(() => {
                       Fix
                     </button>
                   </td>
-                  <td className="px-3 py-1.5 text-xs">
+                  <td className="px-3 py-2 text-sm">
                     {col.nUnique.toString()}
                     <FaEye
-                      className="text-black-500 cursor-pointer inline ml-1"
+                      className="text-black-500 cursor-pointer inline ml-1.5"
                       onClick={() => {
                         stageAction("displayUnique", { colName: col.name }, "Display all the unique values in the column.");
                         setNeedInput(false);
                       }}
                     ></FaEye>
                   </td>
-                  <td className="px-3 py-1.5 text-xs">
-                    <button className="bg-teal-200 text-teal-800 rounded-sm px-1.5 py-0.5 cursor-pointer text-[11px]"
+                  <td className="px-3 py-2 text-sm">
+                    <button className="bg-teal-200 text-teal-800 rounded-sm px-2 py-1 cursor-pointer text-xs"
                       onClick={() =>
                         stageAction(col.describe.toString(), {
 
@@ -239,7 +239,7 @@ useEffect(() => {
                       {col.describe}
                     </button>
                   </td>
-                  <td className="px-3 py-1.5 flex gap-1.5 text-sm">
+                  <td className="px-3 py-2 flex gap-2 text-base">
                     <FaTrash
                       className="text-red-500 cursor-pointer"
                       onClick={() => {

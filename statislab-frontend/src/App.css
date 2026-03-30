@@ -40,7 +40,7 @@
 }
 
 .app-name {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--ink-main);
   letter-spacing: 0.01em;
@@ -75,7 +75,7 @@
 
 .brand-name {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 1rem;
   letter-spacing: 0.01em;
   font-weight: 600;
 }
@@ -83,7 +83,7 @@
 .brand-subtitle {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.65rem;
+  font-size: 0.8rem;
 }
 
 .stepper-wrap {
@@ -107,13 +107,13 @@
 }
 
 .step-pill {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 1.7rem;
+  height: 1.7rem;
   border-radius: 999px;
   border: 1px solid var(--line-soft);
   display: grid;
   place-items: center;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #7b8795;
   background: #fff;
@@ -148,14 +148,14 @@
   margin: 0;
   color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.6rem;
+  letter-spacing: 0.07em;
+  font-size: 0.78rem;
   font-weight: 500;
 }
 
 .stage-title {
   margin: 0.2rem 0;
-  font-size: clamp(1rem, 1.5vw, 1.4rem);
+  font-size: clamp(1.22rem, 1.95vw, 1.72rem);
   font-weight: 600;
   line-height: 1.06;
 }
@@ -163,7 +163,7 @@
 .stage-hint {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.7rem;
+  font-size: 0.9rem;
 }
 
 .progress-wrap {
@@ -216,7 +216,7 @@
 
 .hero-eyebrow {
   margin: 0 0 0.6rem;
-  font-size: 0.7rem;
+  font-size: 0.84rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -378,7 +378,7 @@
 .flow-step p {
   margin: 0.45rem 0 0;
   color: #64748b;
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   line-height: 1.55;
 }
 
@@ -422,7 +422,7 @@
 
 .jump-title {
   margin: 0;
-  font-size: 0.7rem;
+  font-size: 0.84rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #64748b;
@@ -435,7 +435,7 @@
   color: #334155;
   border-radius: 999px;
   padding: 0.24rem 0.65rem;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -481,7 +481,7 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #334155;
   background: #f8fafc;
@@ -497,13 +497,13 @@
 }
 
 .jump-label {
-  font-size: 0.7rem;
+  font-size: 0.88rem;
   color: #0f172a;
   font-weight: 600;
 }
 
 .jump-hint {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   color: #64748b;
   white-space: normal;
 }
@@ -527,15 +527,15 @@
   padding: 0.45rem;
 }
 
-/* Scale down Tailwind text sizes inside screens to standard readable size */
-.screen-shell .text-xs { font-size: 0.7rem !important; }
-.screen-shell .text-sm { font-size: 0.8rem !important; }
-.screen-shell .text-base { font-size: 0.9rem !important; }
-.screen-shell .text-lg { font-size: 1rem !important; }
-.screen-shell .text-xl { font-size: 1.1rem !important; }
-.screen-shell .text-2xl { font-size: 1.3rem !important; }
-.screen-shell .text-3xl { font-size: 1.5rem !important; }
-.screen-shell .text-4xl { font-size: 1.8rem !important; }
+/* Keep Tailwind text utilities close to default scale inside screens */
+.screen-shell .text-xs { font-size: 0.75rem !important; }
+.screen-shell .text-sm { font-size: 0.92rem !important; }
+.screen-shell .text-base { font-size: 1.05rem !important; }
+.screen-shell .text-lg { font-size: 1.18rem !important; }
+.screen-shell .text-xl { font-size: 1.32rem !important; }
+.screen-shell .text-2xl { font-size: 1.58rem !important; }
+.screen-shell .text-3xl { font-size: 1.95rem !important; }
+.screen-shell .text-4xl { font-size: 2.35rem !important; }
 
 .nav-actions {
   margin-top: 0.7rem;
@@ -548,9 +548,9 @@
 .ghost-button {
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  padding: 0.35rem 0.65rem;
+  padding: 0.5rem 0.9rem;
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -593,7 +593,7 @@
 
 .muted-help {
   color: var(--ink-soft);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
 }
 
 @media print {
