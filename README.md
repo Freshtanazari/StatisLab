@@ -1,13 +1,11 @@
 # StatisLab
 
 **StatisLab** is a web-based data analysis application that generates a structured statistical report from a user-provided CSV file.  
-It is designed to help users quickly explore datasets, apply basic preprocessing, verify statistical assumptions, and run common statistical tests — all with transparent logging and reproducible results.
-
+It is designed to help users quickly explore datasets, apply basic preprocessing, verify statistical assumptions, and run common statistical tests.
 ---
 ## 📌 Project Status
 
-This project is currently under active development.  
-Future iterations will expand statistical coverage, improve assumption diagnostics, enhance reporting, and introduce more advanced analysis workflows.
+This project is considered feature-complete as a learning project, but will continue to receive updates and enhancements as new ideas and improvements arise.
 
 ## 🚀 Features
 
@@ -21,7 +19,6 @@ Future iterations will expand statistical coverage, improve assumption diagnosti
 ### 2. Dataset Overview & Quality Check
 - Number of rows and columns
 - Missing value detection
-- Basic data quality indicators
 - Initial dataset preview
 
 ---
@@ -33,7 +30,7 @@ Users can apply common data-cleaning operations:
 - Data type casting
 - Descriptive statistics for each column
 
-📌 **Every preprocessing step is logged** to ensure transparency and reproducibility.
+📌 **Every preprocessing step is logged** 
 
 ---
 
@@ -53,10 +50,10 @@ Users can apply common data-cleaning operations:
 ---
 
 ### 6. Report Generation
-- Automatically generates a structured analysis report
+- generates a structured analysis report
 - Includes:
-  - Dataset summary
-  - Preprocessing steps and changes
+  - Dataset summary and descriptive statistics
+  - Preprocessing steps and changes are logged in a saparate downloadable Excel file. 
   - Statistical tests applied
   - Assumption checks
   - Visualizations
@@ -69,9 +66,35 @@ Users can apply common data-cleaning operations:
 - **Backend:** Python
 - **Data Processing & Statistics:** Pandas, NumPy, SciPy
 - **Visualization:** Matplotlib / Seaborn
+- **API:** FastAPI
 
 ---
 
 ## 🎯 Goal
-StatisLab aims to make statistical analysis more **accessible**, **transparent**, and **reproducible**, especially for students, researchers, and early-stage data practitioners.
+StatisLab aims to make statistical analysis more **accessible**, especially for students, researchers, and early-stage data practitioners.
+
+---
+
+## ⚠️ Limitations
+
+- **Supported File Types:** Only CSV files are supported for upload and analysis.
+- **Statistical Tests:** The platform currently supports a limited set of common statistical tests. 
+- **Assumption Checks:** Diagnostics for statistical assumptions are basic and may not cover all edge cases.
+- **Data Size:** Performance may be impacted with very large datasets due to browser and server memory constraints.
+- **No Real-Time Collaboration:** The application is designed for single-user workflows and does not support collaborative features.
+
+
+
+---
+
+## 🤝 Contributing
+
+Contributions, suggestions, and improvements are welcome! If you have ideas or would like to help enhance StatisLab, feel free to open an issue or submit a pull request.
+
+---
+
+## 🙏 Acknowledgements
+
+Some aspects of the UI design and test creation were refined with the help of AI tools to improve quality and efficiency.
+
 
